@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Love Quiz 🤓</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --bg-1: #ff9a9e;
+            --bg-2: #fad0c4;
+            --glass-bg: rgba(255, 255, 255, 0.25);
+            --glass-border: rgba(255, 255, 255, 0.6);
+            --deep-pink: #e84393;
+            --correct: #00b894;
+            --wrong: #d63031;
+        }
+        * { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            margin: 0; padding: 0;
+            min-height: 100vh;
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(120deg, var(--bg-1) 0%, var(--bg-2) 100%);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+
+        .container {
+            width: 90%; max-width: 400px;
+            background: rgba(255, 255, 255, 0.95); /* Solid bg for readability */
+            border-radius: 20px;
+            padding: 30px; text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            position: relative;
+        }
+
+        h2 { color: var(--deep-pink); margin: 0 0 20px 0; font-size: 1.5rem; }
+        
+        .quiz-content { min-height: 300px; display: flex; flex-direction: column; justify-content: center; }
+
+        .option-btn {
+            width: 100%; padding: 15px; margin: 8px 0;
+            background: #f0f0f0; border: none; border-radius: 12px;
+            font-size: 1rem; color: #444; cursor: pointer; transition: 0.2s;
+            font-weight: 700; font-family: 'Nunito', sans-serif;
+        }
+        .option-btn:hover { background: #e0e0e0; transform: translateY(-2px); }
+        .option-btn:active { transform: scale(0.98); }
+
+        /* Feedback States */
+        .option-btn.correct { background: var(--correct); color: white; }
+        .option-btn.wrong { background: var(--wrong); color: white; animation: shake 0.4s; }
+
+        .progress { color: #888; margin-top: 20px; font-size: 0.9rem; }
+
+        .btn-back {
+            margin-top: 20px;
+            padding: 10px 25px;
+            background: transparent; color: #555;
+            border: 2px solid #ddd; border-radius: 50px;
+            font-weight: bold; cursor: pointer;
+            text-decoration: none; display: inline-block;
+            transition: 0.2s;
+        }
+        .btn-back:hover { background: #fff; border-color: #fff; color: var(--deep-pink); }
+
+        @keyframes shake {
+            0%, 100% {transform: translateX(0);}
+            25% {transform: translateX(-8px);}
+            75% {transform: translateX(8px);}
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="quiz-content" id="quiz-box">
+            <h2 id="question-text">Loading Question...</h2>
+            <div id="options-container">
+                <!-- Options generated here -->
+            </div>
+            <p class="progress" id="progress-text">1 / 5</p>
+        </div>
+
+        <!-- Result Screen (Hidden initially) -->
+        <div class="quiz-content hidden" id="result-box" style="display:none;">
+            <h1 style="font-size:3rem; margin:0;">🏆</h1>
+            <h2 style="color:#00b894;">You know me perfectly!</h2>
+            <p>I love you so much ❤️</p>
+        </div>
+
+        <a href="games_menu.html" class="btn-back">Back to Menu</a>
+    </div>
+
+    <script>
+        // --- QUIZ DATA ---
+        const quizData = [
+            { 
+                q: "What is my favorite nickname for you?", 
+                o: ["chudial", "Gudiya", "cutie", "Princess"], 
+                a: 1
+            },
+            { 
+                q: "Where did we first meet?", 
+                o: ["School", "Tution", "Online", "Dream"], 
+                a: 1 
+            }, 
+            { 
+                q: "What i like to eat", 
+                o: ["kachori", "Parotha", "You", "all of the above😋"], 
+                a: 3
+            },
+            { 
+                q: "Who loves who more?", 
+                o: ["You", "Me (Obviously)", "Equal", "Nobody"], 
+                a: 1 
+            },
+            { 
+                q: "What is my dream date?", 
+                o: ["Fancy Dinner", "Beach Walk", "Mountain Trek", "Home & Netflix"], 
+                a: 2
+            }
+        ];
+
+        let currentQuestion = 0;
+        let isAnswering = false; // Prevent multiple clicks
+
+        function loadQuestion() {
+            isAnswering = false;
+            const data = quizData[currentQuestion];
+            
+            document.getElementById('question-text').innerText = data.q;
+            document.getElementById('progress-text').innerText = `${currentQuestion + 1} / ${quizData.length}`;
+            
+            const optionsDiv = document.getElementById('options-container');
+            optionsDiv.innerHTML = ''; // Clear old buttons
+
+            data.o.forEach((option, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = option;
+                btn.onclick = () => checkAnswer(index, btn);
+                optionsDiv.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedIndex, btnElement) {
+            if (isAnswering) return; // Stop extra clicks
+            isAnswering = true;
+
+            const correctIndex = quizData[currentQuestion].a;
+
+            if (selectedIndex === correctIndex) {
+                // Correct!
+                btnElement.classList.add('correct');
+                confetti({ particleCount: 30, spread: 50, origin: { y: 0.7 } });
+                
+                // Wait 1 sec then next question
+                setTimeout(() => {
+                    currentQuestion++;
+                    if (currentQuestion < quizData.length) {
+                        loadQuestion();
+                    } else {
+                        showResult();
+                    }
+                }, 1000);
+
+            } else {
+                // Wrong!
+                btnElement.classList.add('wrong');
+                // Allow trying again immediately (optional logic)
+                isAnswering = false; 
+            }
+        }
+
+        function showResult() {
+            document.getElementById('quiz-box').style.display = 'none';
+            const resBox = document.getElementById('result-box');
+            resBox.style.display = 'flex';
+            
+            // Big celebration
+            var duration = 3 * 1000;
+            var end = Date.now() + duration;
+
+            (function frame() {
+                confetti({
+                    particleCount: 5,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 }
+                });
+                confetti({
+                    particleCount: 5,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 }
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+        }
+
+        // Start Quiz
+        loadQuestion();
+    </script>
+</body>
+</html>
