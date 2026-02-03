@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Arcade of Love 🎮</title>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-1: #ff9a9e;
+            --bg-2: #fad0c4;
+            --glass-bg: rgba(255, 255, 255, 0.25);
+            --glass-border: rgba(255, 255, 255, 0.6);
+            --deep-pink: #e84393;
+            --accent-pink: #ff6b81;
+        }
+        * { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            margin: 0; padding: 0;
+            height: 100dvh; /* Dynamic viewport height for mobile */
+            width: 100vw;
+            overflow: hidden;
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, var(--bg-1) 0%, var(--bg-2) 100%);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            position: relative;
+        }
+
+        /* --- Floating Background Elements --- */
+        .bg-shape {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            animation: float 20s infinite linear;
+            z-index: 0;
+        }
+        .shape-1 { width: 100px; height: 100px; top: 10%; left: 10%; animation-duration: 25s; }
+        .shape-2 { width: 150px; height: 150px; bottom: 15%; right: 5%; animation-duration: 30s; animation-delay: -5s; }
+        .shape-3 { width: 60px; height: 60px; top: 40%; right: 20%; animation-duration: 18s; animation-delay: -10s; }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0.3; }
+            50% { opacity: 0.6; }
+            100% { transform: translateY(-100px) rotate(360deg); opacity: 0.3; }
+        }
+
+        /* --- Main Glass Card --- */
+        .menu-card {
+            position: relative;
+            width: 90%;
+            max-width: 400px;
+            background: rgba(255, 255, 255, 0.15); /* Glass effect */
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 2px solid var(--glass-border);
+            border-radius: 30px;
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            z-index: 10;
+            animation: popIn 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+            display: flex; flex-direction: column; gap: 20px;
+        }
+
+        h1 {
+            font-family: 'Great Vibes', cursive;
+            font-size: 3.5rem;
+            color: white;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            line-height: 1.2;
+        }
+
+        p.subtitle {
+            color: white;
+            font-size: 1rem;
+            margin: -5px 0 15px 0;
+            font-weight: 700;
+            opacity: 0.9;
+        }
+
+        /* --- Game List --- */
+        .game-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+        }
+
+        .game-item {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.85);
+            padding: 15px;
+            border-radius: 20px;
+            text-decoration: none;
+            color: #444;
+            transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border: 2px solid transparent;
+        }
+
+        .game-item:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 20px rgba(232, 67, 147, 0.2);
+            background: white;
+            border-color: #ffdde1;
+        }
+
+        .game-item:active {
+            transform: scale(0.98);
+        }
+
+        .icon-box {
+            width: 50px; height: 50px;
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+            border-radius: 15px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem;
+            margin-right: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .text-box {
+            text-align: left;
+            flex-grow: 1;
+        }
+
+        .text-box h3 { margin: 0; font-size: 1.1rem; color: var(--deep-pink); }
+        .text-box span { font-size: 0.85rem; color: #777; }
+
+        .arrow {
+            font-size: 1.2rem;
+            color: var(--accent-pink);
+            font-weight: bold;
+        }
+
+        /* --- Back Button --- */
+        .btn-home {
+            margin-top: 10px;
+            background: transparent;
+            border: 2px solid white;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 800;
+            cursor: pointer;
+            text-decoration: none;
+            transition: 0.3s;
+            display: inline-block;
+        }
+        .btn-home:hover {
+            background: white;
+            color: var(--accent-pink);
+        }
+
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.8) translateY(20px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background Shapes -->
+    <div class="bg-shape shape-1"></div>
+    <div class="bg-shape shape-2"></div>
+    <div class="bg-shape shape-3"></div>
+
+    <!-- Main Card -->
+    <div class="menu-card">
+        <div>
+            <h1>Game Zone</h1>
+            <p class="subtitle">Play & Win My Heart! 💖</p>
+        </div>
+
+        <div class="game-list">
+            
+            <!-- Game 1 -->
+            <a href="game_memory.html" class="game-item">
+                <div class="icon-box">🎴</div>
+                <div class="text-box">
+                    <h3>Memory Lane</h3>
+                    <span>Match cute emojis</span>
+                </div>
+                <div class="arrow">➜</div>
+            </a>
+
+            <!-- Game 2 -->
+            <a href="game_quiz.html" class="game-item">
+                <div class="icon-box">🤓</div>
+                <div class="text-box">
+                    <h3>Love Quiz</h3>
+                    <span>How well do you know me?</span>
+                </div>
+                <div class="arrow">➜</div>
+            </a>
+
+            <!-- Game 3 -->
+            <a href="game_wheel.html" class="game-item">
+                <div class="icon-box">🎡</div>
+                <div class="text-box">
+                    <h3>Spin & Win</h3>
+                    <span>Win real future dates!</span>
+                </div>
+                <div class="arrow">➜</div>
+            </a>
+
+        </div>
+
+        <!-- Link back to Main Birthday Page -->
+        <a href="index.html" class="btn-home">🏠 Back to Birthday</a>
+    </div>
+
+</body>
+</html>
