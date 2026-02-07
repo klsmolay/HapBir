@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>7 Days of Love ❤️</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
+    <!-- Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            /* Global Colors */
+            --primary: #ff6b81; 
+            --secondary: #feca57; 
+            --deep: #e84393;
+            --glass: rgba(255, 255, 255, 0.2);
+            --border: rgba(255, 255, 255, 0.4);
+            --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+            
+            /* Day Themes */
+            --rose-bg: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            --propose-bg: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
+            --choco-bg: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%);
+            --teddy-bg: linear-gradient(135deg, #e6dee9 0%, #afc9df 100%);
+            --promise-bg: linear-gradient(135deg, #c471f5 0%, #fa71cd 100%); /* Birthday/Promise */
+            --hug-bg: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+            --kiss-bg: linear-gradient(135deg, #ff9a9e 0%, #ff6b81 100%);
+            --val-bg: linear-gradient(135deg, #ff0844 0%, #ffb199 100%);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            margin: 0; padding: 0; height: 100dvh; width: 100vw; overflow: hidden;
+            font-family: 'Nunito', sans-serif;
+            background: #fff; transition: background 0.5s ease;
+        }
+
+        /* --- VIEWS --- */
+        .view {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: none; flex-direction: column; align-items: center; justify-content: center;
+            padding: 20px; animation: fadeIn 0.5s ease;
+        }
+        .view.active { display: flex; }
+
+        /* --- HOME HUB (Timeline) --- */
+        .hub-container {
+            width: 100%; max-width: 450px; height: 90vh;
+            overflow-y: auto; padding: 10px;
+            scroll-behavior: smooth;
+        }
+        
+        .day-card {
+            background: white; border-radius: 20px; padding: 20px; margin-bottom: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center;
+            transition: transform 0.2s; border-left: 10px solid #ddd; position: relative; overflow: hidden;
+        }
+        .day-card:active { transform: scale(0.98); }
+        .day-card.unlocked { border-left-color: #ff6b81; cursor: pointer; }
+        .day-card.locked { opacity: 0.6; filter: grayscale(1); }
+        
+        .opened-badge {
+            position: absolute; top: 10px; right: 10px;
+            background: #00b894; color: white; font-size: 0.7rem; padding: 2px 8px;
+            border-radius: 10px; font-weight: bold;
+        }
+        
+        .day-info h3 { margin: 0; font-size: 1.2rem; color: #333; }
+        .day-info p { margin: 5px 0 0; font-size: 0.85rem; color: #777; font-weight: bold; }
+        .day-icon { font-size: 2rem; }
+
+        /* --- GENERIC CARD UI --- */
+        .glass-panel {
+            background: var(--glass); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border: 2px solid var(--border); border-radius: 30px;
+            padding: 30px 20px; text-align: center; width: 100%; max-width: 400px;
+            box-shadow: var(--shadow); position: relative;
+        }
+
+        h1 { font-family: 'Great Vibes'; font-size: 3.5rem; margin: 0 0 10px; color: white; text-shadow: 0 2px 5px rgba(0,0,0,0.1); line-height: 1.2; }
+        p.msg { color: white; font-size: 1.2rem; font-weight: 700; margin-bottom: 30px; opacity: 0.95; }
+
+        .btn {
+            background: white; color: #ff6b81; border: none; padding: 15px 40px;
+            border-radius: 50px; font-weight: 800; font-size: 1.1rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2); cursor: pointer;
+            transition: 0.2s; margin-top: 20px;
+        }
+        .btn:active { transform: scale(0.95); }
+        
+        .back-btn {
+            position: absolute; top: 20px; left: 20px;
+            background: rgba(255,255,255,0.3); color: white; border: none;
+            padding: 10px 20px; border-radius: 30px; font-weight: bold;
+            backdrop-filter: blur(5px); cursor: pointer; z-index: 100;
+            display: flex; align-items: center; gap: 5px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        /* --- DAY 1: ROSE --- */
+        .rose-container {
+            width: 150px; height: 150px; margin: 0 auto;
+            filter: grayscale(100%); transition: filter 2s ease; cursor: pointer;
+        }
+        .rose-container.bloomed { filter: grayscale(0%); transform: scale(1.1); }
+        .rose-img { width: 100%; height: 100%; object-fit: contain; }
+
+        /* --- DAY 2: PROPOSE (Ring Box) --- */
+        .ring-box {
+            width: 120px; height: 120px; background: #c0392b; margin: 20px auto;
+            border-radius: 20px; position: relative; cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2); transition: 0.5s;
+        }
+        .ring-lid {
+            width: 100%; height: 50%; background: #e74c3c; position: absolute; top: 0;
+            border-radius: 20px 20px 0 0; transform-origin: top; transition: 0.5s;
+            z-index: 2; border-bottom: 2px solid rgba(0,0,0,0.1);
+        }
+        .diamond {
+            font-size: 4rem; position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(0); transition: 0.5s; z-index: 1;
+        }
+        .ring-box.open .ring-lid { transform: rotateX(180deg); }
+        .ring-box.open .diamond { transform: translate(-50%, -80%) scale(1); }
+        
+        /* Propose Buttons */
+        .propose-btns { display: flex; justify-content: center; gap: 15px; margin-top: 20px; }
+        .btn-yes { background: #27ae60; color: white; }
+        .btn-no { background: #c0392b; color: white; }
+
+        /* --- DAY 3: CHOCOLATE (REALISTIC) --- */
+        .choco-bar {
+            width: 180px; height: 240px; margin: 0 auto;
+            border-radius: 5px; position: relative; overflow: hidden; cursor: pointer;
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.2);
+        }
+        .choco-grid {
+            width: 100%; height: 100%;
+            background: #4e342e; /* Dark Chocolate */
+            /* 3D Grid Effect */
+            background-image: linear-gradient(rgba(255,255,255,0.1) 2px, transparent 2px), 
+            linear-gradient(90deg, rgba(255,255,255,0.1) 2px, transparent 2px),
+            linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+            background-size: 50px 50px, 50px 50px, 10px 10px, 10px 10px;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .choco-text {
+            color: rgba(255,255,255,0.3); font-family: serif; 
+            font-weight: bold; font-size: 1.5rem; text-shadow: 1px 1px 0 rgba(0,0,0,0.5);
+            border: 2px solid rgba(255,255,255,0.1); padding: 5px 15px;
+        }
+        .foil {
+            width: 100%; height: 100%; 
+            background: linear-gradient(135deg, #ffd700 0%, #f1c40f 50%, #ffd700 100%);
+            position: absolute; top: 0; transition: transform 1s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: bold; color: #b8860b; font-size: 1.5rem; text-align: center;
+            border: 1px solid #e1b12c;
+            z-index: 5;
+        }
+        .choco-bar.unwrapped .foil { transform: translateY(100%); }
+
+        /* --- DAY 4: TEDDY --- */
+        .teddy-img { font-size: 8rem; margin: 20px 0; animation: bounce 2s infinite; }
+
+        /* --- DAY 5: PROMISE + BIRTHDAY --- */
+        .hand-wrapper { font-size: 6rem; display: flex; justify-content: center; gap: 20px; cursor: pointer; margin: 30px 0; }
+        .hand { transition: 0.5s; }
+        .hand-wrapper.locked .h-left { transform: translateX(30px); }
+        .hand-wrapper.locked .h-right { transform: translateX(-30px); }
+        .bday-btn {
+            background: linear-gradient(45deg, #ff9ff3, #feca57); color: white;
+            animation: pulse 1.5s infinite; border: 2px solid white;
+        }
+
+        /* --- DAY 6: HUG --- */
+        .hug-emoji { font-size: 8rem; transition: 0.5s; display: inline-block; }
+        .hug-active .hug-emoji { transform: scale(1.3); }
+
+        /* --- DAY 7: KISS --- */
+        #kiss-canvas {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1; cursor: crosshair;
+        }
+        .lipstick-mark {
+            position: absolute; font-size: 3rem; transform: translate(-50%, -50%) rotate(-20deg);
+            pointer-events: none; animation: popIn 0.2s; opacity: 0.8;
+        }
+
+        /* --- DAY 8: VALENTINE (Updated) --- */
+        .heart-beat { font-size: 8rem; color: white; animation: beat 1s infinite; margin-bottom: 20px; cursor:pointer; }
+        
+        /* New Translucent Letter Style */
+        .letter-scroll {
+            width: 100%; max-width: 320px; height: 300px;
+            background: rgba(255, 255, 255, 0.5); /* Semi-transparent */
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 20px;
+            overflow-y: auto;
+            position: relative;
+            transform: scale(0); transition: transform 0.5s;
+            border: 1px solid rgba(255,255,255,0.8);
+        }
+        .letter-scroll.show { transform: scale(1); }
+        
+        .letter-content {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.5rem; color: #640d14; /* Deep red text for contrast */
+            line-height: 1.6; text-align: left; font-weight: 600;
+        }
+
+        /* --- PRANK SCREEN (THE TRAP) --- */
+        #prank-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; color: #ff3333; font-family: monospace;
+            display: none; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 99999; text-align: center; padding: 20px;
+        }
+        #prank-msg-container { min-height: 100px; margin-bottom: 20px; }
+        .prank-line { font-size: 1.2rem; margin-bottom: 10px; animation: fadeIn 0.5s; }
+        
+        .prank-btn {
+            background: transparent; color: red; border: 1px solid red;
+            padding: 10px 20px; font-family: monospace; cursor: pointer;
+            margin-top: 20px; transition: 0.2s;
+        }
+        .prank-btn:hover { background: red; color: black; }
+        
+        #death-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: black; color: red; display: none;
+            flex-direction: column; align-items: center; justify-content: center;
+            z-index: 100000;
+        }
+
+        /* --- MODAL (Popup) --- */
+        .modal {
+            display: none; position: fixed; z-index: 10000; left: 0; top: 0;
+            width: 100%; height: 100%; background-color: rgba(0,0,0,0.5);
+            justify-content: center; align-items: center;
+            backdrop-filter: blur(5px); animation: fadeIn 0.3s;
+        }
+        .modal-content {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px; border-radius: 20px;
+            width: 85%; max-width: 350px; text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border: 2px solid var(--primary);
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* Animations */
+        @keyframes fadeIn { from {opacity:0; transform: translateY(20px);} to {opacity:1; transform: translateY(0);} }
+        @keyframes pulse { 0%{transform:scale(1);} 50%{transform:scale(1.05);} 100%{transform:scale(1);} }
+        @keyframes bounce { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-20px);} }
+        @keyframes popIn { 0%{transform:translate(-50%,-50%) scale(0);} 100%{transform:translate(-50%,-50%) scale(1) rotate(-20deg);} }
+        @keyframes beat { 0%,100%{transform:scale(1);} 50%{transform:scale(1.2);} }
+        
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body id="app-body">
+
+    <!-- PRANK SEQUENCE UI -->
+    <div id="prank-screen">
+        <center>
+        <h4 style="color:red; font-size:3rem; border: 2px solid red; padding: 5px 20px;">SYSTEM ALERT⚠️</h4>
+        <div id="prank-msg-container">
+            <!-- Messages appear here -->
+        </div>
+        <button id="prank-next-btn" class="prank-btn" onclick="nextPrankStep()">Continue ></button>
+        <div id="countdown-display" style="font-size: 4rem; color: white; display: none;"></div>
+        </center>
+    </div>
+
+    <!-- DEATH SCREEN (Persistent) -->
+    <div id="death-screen">
+        <center>
+        <h2 style="font-size: 3rem; border: 2px solid red; padding: 10px;">LOVE ERROR</h2>
+        <p>💔 User Heart Not Found</p>
+        <p style="font-size: 0.8rem; color: #555; margin-top: 20px;">(Error Code: SHE_SAID_NO)<br> it hurts more than anything</p>
+        </center>
+    </div>
+
+    <!-- LOCKED DAY MODAL -->
+    <div id="locked-modal" class="modal">
+        <div class="modal-content">
+            <h1 style="color:#e84393; font-size: 3rem; margin:0;">🔒 Locked</h1>
+            <p style="color:#555; font-size: 1.2rem; margin: 20px 0;" id="locked-msg">...</p>
+            <button class="btn" style="margin-top:0;" onclick="document.getElementById('locked-modal').style.display='none'">Okay, I'll wait 🥺</button>
+        </div>
+    </div>
+
+    <!-- VIEW: HUB (HOME) -->
+    <div id="view-hub" class="view active">
+        <h1 style="color:#333; text-shadow:none; margin-bottom:5px;">Valentine's Week 📅</h1>
+        <p style="color:#666; font-weight:bold; margin-bottom:20px;">A surprise for every day...</p>
+        <div class="hub-container" id="timeline"></div>
+    </div>
+
+    <!-- VIEW: DAY 1 (ROSE) -->
+    <div id="view-day1" class="view">
+        <button class="back-btn" onclick="goHome()">🏠 Home</button>
+        <div class="glass-panel">
+            <h1>Rose Day 🌹</h1>
+            <p class="msg">Tap the rose to make it bloom...</p>
+            <div class="rose-container" onclick="bloomRose(this)">
+                <div style="font-size:8rem;">🌹</div>
+            </div>
+            <p class="msg hidden" id="d1-msg" style="margin-top:20px;">Like a rose, you make my world beautiful.</p>
+        </div>
+    </div>
+
+    <!-- VIEW: DAY 2 (PROPOSE) -->
+    <div id="view-day2" class="view">
+        <button class="back-btn" onclick="goHome()">🏠 Home</button>
+        <div class="glass-panel">
+            <h1>Propose Day 💍</h1>
+            <div class="ring-box" onclick="openRingBox(this)">
+                <div class="ring-lid"></div>
+                <div class="diamond">💍</div>
+            </div>
+            <div id="proposal-q" class="hidden">
+                <p class="msg">Will you be mine forever?</p>
+                <div class="propose-btns">
+                    <button class="btn btn-no" onclick="triggerPrank()">NO</button>
+                    <button class="btn btn-yes" onclick="acceptProposal()">YES! ❤️</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIEW: DAY 3 (CHOCOLATE) -->
+    <div id="view-day3" class="view">
+        <button class="back-btn" onclick="goHome()">🏠 Home</button>
+        <div class="glass-panel">
+            <h1>Chocolate Day 🍫</h1>
+            <p class="msg">Tap to unwrap...</p>
+            
+            <div class="choco-bar" onclick="unwrapChoco(this)">
+                <div class="foil">PREMIUM<br>GOLD</div>
+                <div class="choco-grid">
+                    <div class="choco-text">Sweetest</div>
+                </div>
+            </div>
+            
+            <p class="msg hidden" id="day3-msg" style="margin-top:20px;">You are sweeter than any chocolate! ❤️</p>
+        </div>
+    </div>
+
+    <!-- VIEW: DAY 4 (TEDDY) -->
+    <div id="view-day4" class="view">
+        <button class="back-btn" onclick="goHome()">🏠 Home</button>
+        <div class="glass-panel">
+            <h1>Teddy Day 🧸</h1>
+            <div class="teddy-img">🧸</div>
+            <p class="msg">Wait... You don't need a Teddy.<br>You ARE my Cutest Teddy!</p>
+            <button class="btn" onclick="completeDay(4)">So True! 😍</button>
+        </div>
+    </div>
+
+    <!-- VIEW: DAY 5 (PROMISE + BIRTHDAY) -->
+    <div id="view-day5" class="view">
+        <button class="back-btn" onclick="goHome()">🏠 Home</button>
+        <div class="glass-panel">
+            <h1>Promise Day 🤞</h1>
+            <p class="msg">Tap to lock our promise...</p>
+            <div class="hand-wrapper" onclick="lockPromise(this)">
+                <div class="hand h-left">✋</div>
+                <div class="hand h-right">✋</div>
+            </div>
+            <div id="bday-unlock" class="hidden">
+                <p class="msg">Promise Locked! Now...</p>
+                <!-- IMPORTANT: Replace '#' with your actual Birthday Website Link -->
+                <a href="./bir.html" class="btn bday-btn" style="text-decoration:none; display:inline-block;" onclick="completeDay(5)">🎂 Birthday Surprise</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIEW: DAY 6 (HUG) -->
+    <div id="view-day6" class="view">
+        <button class="back-btn" onclick="goHome()">🏠 Home</button>
+        <div class="glass-panel">
+            <h1>Hug Day 🤗</h1>
+            <div id="hug-display" style="margin: 30px 0;">
+                <div class="hug-emoji">🤗</div>
+            </div>
+            <p class="msg">I'm sending you a big virtual hug!</p>
+            <button class="btn" onmousedown="startHug()" ontouchstart="startHug()" onmouseup="endHug()" ontouchend="endHug()">Hold for Hug</button>
+        </div>
+    </div>
+
+    <!-- VIEW: DAY 7 (KISS) -->
+    <div id="view-day7" class="view">
+        <button class="back-btn" onclick="goHome()">🏠 Home</button>
+        <!-- Transparent panel to allow clicking behind -->
+        <div class="glass-panel" style="background:rgba(255,255,255,0.1); pointer-events:none;">
+            <h1 style="color:#ff6b81;">Kiss Day 💋</h1>
+            <p class="msg" style="color:#ff6b81; background:white; border-radius:20px; padding:5px; display:inline-block;">Tap anywhere to leave a mark!</p>
+        </div>
+        <div id="kiss-canvas" onclick="addLipstick(event)"></div>
+        <!-- Button to finish day -->
+        <button class="btn" style="position:absolute; bottom:30px; z-index:100;" onclick="completeDay(7)">Done Kissing 😘</button>
+    </div>
+
+    <!-- VIEW: DAY 8 (VALENTINE) -->
+    <div id="view-day8" class="view">
+        <button class="back-btn" onclick="goHome()">🏠 Home</button>
+        <div class="glass-panel">
+            <div class="heart-beat" onclick="openLetter()">❤️</div>
+            <h1 style="font-size:2rem;">Tap the Heart</h1>
+            
+            <div class="letter-scroll" id="val-letter">
+                <div class="letter-content">
+                    My Dearest Gudiya,<br><br>
+                    Every day with you feels like a celebration. From your silly jokes to your warm hugs, you make my life complete.<br><br>
+                    You are my best friend, my partner, my girl, and the love of my life.<br><br>
+                    Happy Valentine's Day! ❤️<br><br>
+                    Forever Yours,<br>
+                    Yours batman
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* --- CONFIGURATION --- */
+        const DEV_MODE = false; // Set to FALSE for real dates
+        
+        // Dynamic Year Generation to ensure it works for current year
+        const year = new Date().getFullYear();
+        
+        // Strict Dates (Year-Month-Day)
+        const DATES = {
+            1: `${year}-02-07`, 2: `${year}-02-08`, 3: `${year}-02-09`, 4: `${year}-02-10`,
+            5: `${year}-02-11`, 6: `${year}-02-12`, 7: `${year}-02-13`, 8: `${year}-02-14`
+        };
+
+        const TIMELINE = [
+            { id: 1, title: "Rose Day", theme: "var(--rose-bg)", icon: "🌹" },
+            { id: 2, title: "Propose Day", theme: "var(--propose-bg)", icon: "💍" },
+            { id: 3, title: "Chocolate Day", theme: "var(--choco-bg)", icon: "🍫" },
+            { id: 4, title: "Teddy Day", theme: "var(--teddy-bg)", icon: "🧸" },
+            { id: 5, title: "Promise + B'Day", theme: "var(--promise-bg)", icon: "🎂" },
+            { id: 6, title: "Hug Day", theme: "var(--hug-bg)", icon: "🤗" },
+            { id: 7, title: "Kiss Day", theme: "var(--kiss-bg)", icon: "💋" },
+            { id: 8, title: "Valentine's Day", theme: "var(--val-bg)", icon: "❤️" }
+        ];
+
+        /* --- INIT --- */
+        window.onload = () => {
+            // Check for Persistent Death
+            if(localStorage.getItem('site_crashed') === 'true') {
+                showDeathScreen();
+                return;
+            }
+            renderHub();
+        };
+
+        /* --- HUB LOGIC --- */
+        function renderHub() {
+            const container = document.getElementById('timeline');
+            container.innerHTML = '';
+            
+            // Get local date string YYYY-MM-DD to avoid timezone issues
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const todayStr = `${year}-${month}-${day}`;
+
+            TIMELINE.forEach(day => {
+                const unlockDateStr = DATES[day.id];
+                const isUnlocked = DEV_MODE || (todayStr >= unlockDateStr);
+                const isCompleted = localStorage.getItem(`day${day.id}_complete`) === 'true';
+
+                const card = document.createElement('div');
+                card.className = `day-card ${isUnlocked ? 'unlocked' : 'locked'}`;
+                card.onclick = () => {
+                    if(isUnlocked) openDay(day.id, day.theme);
+                    else {
+                        // Show Modal instead of alert
+                        // Format date for display
+                        const dateObj = new Date(unlockDateStr);
+                        const options = { month: 'short', day: 'numeric' };
+                        const niceDate = dateObj.toLocaleDateString('en-US', options);
+                        
+                        document.getElementById('locked-msg').innerHTML = `Shhh! Gudiya🤫 Good things take time.<br><br>Come back on <b>${niceDate}</b>!`;
+                        document.getElementById('locked-modal').style.display = 'flex';
+                    }
+                };
+
+                // Add "Opened" Badge if completed
+                let badge = isCompleted ? '<div class="opened-badge">OPENED ✅</div>' : '';
+
+                card.innerHTML = `
+                    ${badge}
+                    <div class="day-info">
+                        <h3>${day.title}</h3>
+                        <p>${unlockDateStr}</p>
+                    </div>
+                    <div class="day-icon">${isUnlocked ? day.icon : '🔒'}</div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function openDay(id, theme) {
+            document.body.style.background = theme;
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById(`view-day${id}`).classList.add('active');
+        }
+
+        function goHome() {
+            document.body.style.background = "#fff";
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById('view-hub').classList.add('active');
+            renderHub();
+        }
+
+        function completeDay(id) {
+            localStorage.setItem(`day${id}_complete`, 'true');
+            // Do not auto-redirect. Let user explore.
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+        }
+
+        /* --- DAY 1 --- */
+        function bloomRose(el) {
+            if(el.classList.contains('bloomed')) return;
+            el.classList.add('bloomed');
+            confetti({ colors: ['#ff0000', '#ff6b81'], particleCount: 50 });
+            document.getElementById('d1-msg').classList.remove('hidden');
+            completeDay(1);
+        }
+
+        /* --- DAY 2: THE PRANK LOGIC (UPDATED) --- */
+        function openRingBox(el) {
+            if(el.classList.contains('open')) return;
+            el.classList.add('open');
+            setTimeout(() => document.getElementById('proposal-q').classList.remove('hidden'), 500);
+        }
+        
+        let prankStep = 0;
+        const prankMessages = [
+            "Ohh...",
+            "I was doubting but never sure...",
+            "But that's fine. Your life, your wish, your choice."
+        ];
+
+        function triggerPrank() {
+            // Hide Day 2 view immediately
+            document.getElementById('view-day2').classList.remove('active');
+            
+            const screen = document.getElementById('prank-screen');
+            screen.style.display = 'flex';
+            
+            // Show first message
+            nextPrankStep();
+        }
+
+        function nextPrankStep() {
+            const container = document.getElementById('prank-msg-container');
+            const btn = document.getElementById('prank-next-btn');
+            
+            if (prankStep < prankMessages.length) {
+                // Add new message to list
+                const msg = document.createElement('p');
+                msg.className = 'prank-line';
+                msg.innerText = prankMessages[prankStep];
+                container.appendChild(msg);
+                prankStep++;
+            } else {
+                // Final Step: Countdown
+                btn.style.display = 'none'; // Hide button
+                const msg = document.createElement('p');
+                msg.className = 'prank-line';
+                msg.style.color = "red";
+                msg.innerText = "Deleting website data in...";
+                container.appendChild(msg);
+                
+                const cd = document.getElementById('countdown-display');
+                cd.style.display = 'block';
+                
+                let count = 3;
+                cd.innerText = count;
+                const timer = setInterval(() => {
+                    count--;
+                    cd.innerText = count;
+                    if(count <= 0) {
+                        clearInterval(timer);
+                        localStorage.setItem('site_crashed', 'true');
+                        showDeathScreen();
+                    }
+                }, 1000);
+            }
+        }
+
+        function showDeathScreen() {
+            document.getElementById('prank-screen').style.display = 'none';
+            document.getElementById('death-screen').style.display = 'flex';
+        }
+
+        function acceptProposal() {
+            confetti({ particleCount: 150, spread: 100 });
+            alert("Good choice! ❤️");
+            completeDay(2);
+        }
+
+        /* --- DAY 3 --- */
+        function unwrapChoco(el) {
+            if(el.classList.contains('unwrapped')) return;
+            el.classList.add('unwrapped');
+            confetti({ shapes: ['square'], colors: ['#ffd700'], particleCount: 30 });
+            document.getElementById('day3-msg').classList.remove('hidden');
+            completeDay(3);
+        }
+
+        /* --- DAY 5 --- */
+        function lockPromise(el) {
+            if(el.classList.contains('locked')) return;
+            el.classList.add('locked');
+            setTimeout(() => {
+                el.querySelector('.h-left').innerText = "🤞";
+                el.querySelector('.h-right').innerText = "🤞";
+                document.getElementById('bday-unlock').classList.remove('hidden');
+                confetti();
+            }, 500);
+            completeDay(5); // Mark done when promise locked
+        }
+
+        /* --- DAY 6 --- */
+        function startHug() {
+            document.getElementById('hug-display').classList.add('hug-active');
+            if(navigator.vibrate) navigator.vibrate(200);
+        }
+        function endHug() {
+            document.getElementById('hug-display').classList.remove('hug-active');
+            confetti({ particleCount: 20, spread: 40 });
+            completeDay(6);
+        }
+
+        /* --- DAY 7 --- */
+        function addLipstick(e) {
+            const mark = document.createElement('div');
+            mark.className = 'lipstick-mark';
+            mark.innerText = '💋';
+            mark.style.left = e.clientX + 'px';
+            mark.style.top = e.clientY + 'px';
+            mark.style.transform = `translate(-50%, -50%) rotate(${Math.random()*40-20}deg)`;
+            document.getElementById('view-day7').appendChild(mark);
+        }
+
+        /* --- DAY 8 --- */
+        function openLetter() {
+            const l = document.getElementById('val-letter');
+            if(l.classList.contains('show')) return;
+            l.classList.add('show');
+            confetti();
+            completeDay(8);
+        }
+
+        /* Utils */
+        const style = document.createElement('style');
+        style.innerHTML = ` .hidden { display: none !important; } `;
+        document.head.appendChild(style);
+
+    </script>
+</body>
+</html>
