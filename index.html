@@ -285,7 +285,7 @@
         <center>
         <h2 style="font-size: 3rem; border: 2px solid red; padding: 10px;">LOVE ERROR</h2>
         <p>💔 User Heart Not Found</p>
-        <p style="font-size: 0.8rem; color: #555; margin-top: 20px;">(Error Code: SHE_SAID_NO)<br> it hurts more than anything</p>
+        <p style="font-size: 0.8rem; color: #555; margin-top: 20px;">(Error Found: SHE_SAID_NO)<br> it hurts😔 more than anything🥺</p>
         </center>
     </div>
 
@@ -314,7 +314,7 @@
             <div class="rose-container" onclick="bloomRose(this)">
                 <div style="font-size:8rem;">🌹</div>
             </div>
-            <p class="msg hidden" id="d1-msg" style="margin-top:20px;">Like a rose, you make my world beautiful.</p>
+            <p class="msg hidden" id="d1-msg" style="margin-top:20px;">Like a rose, you make my world beautiful.<br>Happy Rose Day to the pretty Rose</p>
         </div>
     </div>
 
@@ -322,7 +322,7 @@
     <div id="view-day2" class="view">
         <button class="back-btn" onclick="goHome()">🏠 Home</button>
         <div class="glass-panel">
-            <h1>Propose Day 💍</h1>
+            <h1>Propose Day</h1>
             <div class="ring-box" onclick="openRingBox(this)">
                 <div class="ring-lid"></div>
                 <div class="diamond">💍</div>
@@ -430,6 +430,18 @@
         </div>
     </div>
 
+        <!-- PROPOSAL ACCEPTED MODAL -->
+    <div id="yes-modal" class="modal">
+        <div class="modal-content" style="border: 2px solid #27ae60;">
+            <div style="font-size: 4rem;">💍</div>
+            <h1 style="color:#27ae60; margin:10px 0; font-size: 2rem;">She Said YES!</h1>
+            <p style="color:#555; font-size:1.1rem; margin: 15px 0;">
+                Best decision ever! You just made me the happiest person in the world. ❤️
+            </p>
+            <button class="btn" style="margin-top:0; background:#27ae60; color:white;" onclick="finishProposal()">Continue ➡️</button>
+        </div>
+    </div>
+
     <script>
         /* --- CONFIGURATION --- */
         const DEV_MODE = false; // Set to FALSE for real dates
@@ -454,13 +466,25 @@
             { id: 8, title: "Valentine's Day", theme: "var(--val-bg)", icon: "❤️" }
         ];
 
+
         /* --- INIT --- */
         window.onload = () => {
-            // Check for Persistent Death
-            if(localStorage.getItem('site_crashed') === 'true') {
-                showDeathScreen();
-                return;
+            // 1. Check for Prank Lock
+            const lockDate = localStorage.getItem('prank_lock_until');
+
+            if (lockDate && !DEV_MODE) {
+                const todayStr = new Date().toISOString().split('T')[0]; // Get YYYY-MM-DD
+
+                // If Today is BEFORE the unlock date (e.g. it's Feb 8 or 9, but unlocks Feb 10)
+                if (todayStr < lockDate) {
+                    showDeathScreen();
+                    return; // Stop everything else from loading
+                } else {
+                    // The wait is over! Remove the lock automatically
+                    localStorage.removeItem('prank_lock_until');
+                }
             }
+        
             renderHub();
         };
 
@@ -595,7 +619,13 @@
                     cd.innerText = count;
                     if(count <= 0) {
                         clearInterval(timer);
-                        localStorage.setItem('site_crashed', 'true');
+
+                        // --- FIXED LINE BELOW (Added Backticks ` `) ---
+                        const currentYear = new Date().getFullYear();
+                        const unlockDate = `${currentYear}-02-10`; 
+                        
+                        localStorage.setItem('prank_lock_until', unlockDate);
+
                         showDeathScreen();
                     }
                 }, 1000);
@@ -607,9 +637,18 @@
             document.getElementById('death-screen').style.display = 'flex';
         }
 
+        /* Updated Proposal Logic */
         function acceptProposal() {
-            confetti({ particleCount: 150, spread: 100 });
-            alert("Good choice! ❤️");
+            // 1. Trigger massive confetti
+            confetti({ particleCount: 150, spread: 100, origin: { y: 0.6 } });
+
+            // 2. Show the beautiful popup instead of alert
+            document.getElementById('yes-modal').style.display = 'flex';
+        }
+
+        function finishProposal() {
+            // Close modal and save progress
+            document.getElementById('yes-modal').style.display = 'none';
             completeDay(2);
         }
 
