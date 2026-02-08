@@ -81,7 +81,7 @@
         }
 
         h1 { font-family: 'Great Vibes'; font-size: 3.5rem; margin: 0 0 10px; color: white; text-shadow: 0 2px 5px rgba(0,0,0,0.1); line-height: 1.2; }
-        p.msg { color: white; font-size: 1.2rem; font-weight: 700; margin-bottom: 30px; opacity: 0.95; }
+        p.msg { color: #333; font-size: 1.2rem; font-weight: 700; margin-bottom: 30px; opacity: 0.95; }
 
         .btn {
             background: white; color: #ff6b81; border: none; padding: 15px 40px;
@@ -410,7 +410,7 @@
     <div id="view-day3" class="view">
         <button class="back-btn" onclick="goHome()">🏠 Home</button>
         <div class="glass-panel">
-            <h1>Chocolate Day 🍫</h1>
+            <h1 style="color: #4e342e;">Chocolate Day 🍫</h1>
             <p class="msg">Tap to unwrap...</p>
             
             <div class="choco-bar" onclick="unwrapChoco(this)">
@@ -420,7 +420,7 @@
                 </div>
             </div>
             
-            <p class="msg hidden" id="day3-msg" style="margin-top:20px;">You are sweeter than any chocolate! ❤️</p>
+            <p class="msg hidden" id="day3-msg" style="margin-top:20px; color: #4e342e;">You are sweeter than any chocolate! ❤️</p>
         </div>
     </div>
 
@@ -477,6 +477,7 @@
         <div id="kiss-canvas" onclick="addLipstick(event)"></div>
         <!-- Button to finish day -->
         <button class="btn" style="position:absolute; bottom:30px; z-index:100;" onclick="completeDay(7)">Done Kissing 😘</button>
+        <a href="./reasons.html" class="btn-action" id="next-reason-btn" style="font-size:0.9rem; text-decoration: none; position:absolute; bottom:100px; color: rgb(196, 89, 106); z-index:100;">See 100 reason list</a>
     </div>
 
     <!-- VIEW: DAY 8 (VALENTINE) -->
@@ -496,7 +497,6 @@
                     Yours batman
                 </div>
             </div>
-        <a href="./reasons.html" class="btn-action" id="next-reason-btn" style="font-size:0.9rem; text-decoration: none;">See 100 reason list</a>
         </div>
     </div>
 
@@ -529,7 +529,7 @@
 
     <script>
         /* --- CONFIGURATION --- */
-        const DEV_MODE = false; // Set to FALSE for real dates
+        const DEV_MODE = true; // Set to FALSE for real dates
         
         // Dynamic Year Generation to ensure it works for current year
         const year = new Date().getFullYear();

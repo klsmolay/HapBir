@@ -124,6 +124,57 @@
         }
         .btn-home:active { transform: scale(0.95); background: rgba(255,255,255,0.4); }
 
+                /* --- BEAUTIFUL MUSIC MODAL --- */
+        #music-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6); /* Dark dimmed background */
+            backdrop-filter: blur(8px); /* Blur effect on background */
+            display: flex; justify-content: center; align-items: center;
+            z-index: 20000;
+            opacity: 0; animation: fadeIn 0.5s forwards; /* Smooth fade in */
+        }
+
+        .music-content {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 25px;
+            width: 85%; max-width: 350px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            border: 2px solid #ff9ff3;
+            transform: scale(0.8);
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        .music-icon {
+            font-size: 3rem; margin-bottom: 10px;
+            animation: float 3s ease-in-out infinite;
+            display: inline-block;
+        }
+
+        .music-btn {
+            padding: 12px 25px; border: none; border-radius: 50px;
+            font-size: 1rem; font-weight: bold; cursor: pointer;
+            transition: transform 0.2s;
+            font-family: 'Nunito', sans-serif;
+        }
+        .music-btn:active { transform: scale(0.95); }
+
+        .btn-yes-music {
+            background: linear-gradient(45deg, #ff6b81, #ff9ff3);
+            color: white;
+            box-shadow: 0 5px 15px rgba(255, 107, 129, 0.4);
+        }
+
+        .btn-no-music {
+            background: #f1f2f6; color: #636e72;
+        }
+
+        @keyframes fadeIn { to { opacity: 1; } }
+        @keyframes popIn { to { transform: scale(1); } }
+        @keyframes float { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-10px);} }
+    </style>
+
     </style>
 </head>
 <body>
@@ -142,6 +193,24 @@
 
     <a href="index.html" class="btn-home">🏠 Back to Home</a>
 
+        <!-- HIDDEN AUDIO PLAYER -->
+    <audio id="bg-music" loop>
+        <source src="./audio/reasonPageMusic.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="music-modal">
+        <div class="music-content">
+            <div class="music-icon">🎵</div>
+            <h1 style="font-family:'Great Vibes'; color:#e84393; font-size:2.5rem; margin:0;">Music?</h1>
+            <p style="color:#666; font-size:1.1rem; margin:15px 0 25px 0; line-height:1.5;">
+                Gudiya would you like to play song while you explore? ✨
+            </p>
+            <div style="display:flex; justify-content:center; gap:15px;">
+                <button class="music-btn btn-no-music" onclick="handleMusic(false)">No, thanks 🤬</button>
+                <button class="music-btn btn-yes-music" onclick="handleMusic(true)">Yes, Play! 🥰</button>
+            </div>
+        </div>
+    </div>
     <script>
         // --- 100 Reasons Datas---
         const REASONS = [
@@ -197,47 +266,65 @@
                    "Because you are mine, my girl.", "I choose you, every single day."
         ];
 
-        const listContainer = document.getElementById('reason-list');
+window.onload = () => {
 
-        function initList() {
-            spawnHearts();
-            
-            REASONS.forEach((text, index) => {
-                // Create Wrapper for Entry Animation
-                const wrapper = document.createElement('div');
-                wrapper.className = 'reason-wrapper';
-                wrapper.style.animationDelay = `${index * 0.1}s`;
+    const listContainer = document.getElementById('reason-list');
 
-                // Create Content Box for Visuals & Float Animation
-                const item = document.createElement('div');
-                item.className = 'reason-item';
-                
-                item.innerHTML = `
-                    <span>Reason #${index + 1}</span>
-                    ${text}
-                `;
-                
-                wrapper.appendChild(item);
-                listContainer.appendChild(wrapper);
-            });
+    function handleMusic(play) {
+        const modal = document.getElementById('music-modal');
+        const audio = document.getElementById('bg-music');
+
+        if (play) {
+            audio.volume = 0.5;
+            audio.play().catch(e => console.log("Audio error:", e));
         }
 
-        // --- Background Animation ---
-        function spawnHearts() {
-            const container = document.getElementById('hearts-container');
-            setInterval(() => {
-                const heart = document.createElement('div');
-                heart.classList.add('heart-bg');
-                heart.innerText = ['❤️', '💖', '🌸', '💘'][Math.floor(Math.random()*4)];
-                heart.style.left = Math.random() * 100 + 'vw';
-                heart.style.fontSize = Math.random() * 20 + 10 + 'px';
-                heart.style.animationDuration = Math.random() * 5 + 5 + 's';
-                container.appendChild(heart);
-                setTimeout(() => heart.remove(), 10000);
-            }, 300);
-        }
+        modal.style.transition = "opacity 0.5s";
+        modal.style.opacity = "0";
+        setTimeout(() => modal.style.display = "none", 500);
+    }
 
-        initList();
+    function spawnHearts() {
+        const container = document.getElementById('hearts-container');
+
+        setInterval(() => {
+            const heart = document.createElement('div');
+            heart.classList.add('heart-bg');
+            heart.innerText = ['❤️', '💖', '🌸', '💘'][Math.floor(Math.random()*4)];
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.fontSize = Math.random() * 20 + 10 + 'px';
+            heart.style.animationDuration = Math.random() * 5 + 5 + 's';
+
+            container.appendChild(heart);
+            setTimeout(() => heart.remove(), 10000);
+        }, 300);
+    }
+
+    function initList() {
+        spawnHearts();
+
+        REASONS.forEach((text, index) => {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'reason-wrapper';
+            wrapper.style.animationDelay = `${index * 0.1}s`;
+
+            const item = document.createElement('div');
+            item.className = 'reason-item';
+            item.innerHTML = `
+                <span>Reason #${index + 1}</span>
+                ${text}
+            `;
+
+            wrapper.appendChild(item);
+            listContainer.appendChild(wrapper);
+        });
+    }
+
+    // make button onclick work
+    window.handleMusic = handleMusic;
+
+    initList();
+};
     </script>
 </body>
 </html>
