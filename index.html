@@ -330,7 +330,7 @@
             <div id="proposal-q" class="hidden">
                 <p class="msg">Will you be mine forever?</p>
                 <div class="propose-btns">
-                    <button class="btn btn-no" onclick="triggerPrank()">NO</button>
+                    <button class="btn btn-no" onclick="confirmNo()">NO 👎</button>
                     <button class="btn btn-yes" onclick="acceptProposal()">YES! ❤️</button>
                 </div>
             </div>
@@ -439,6 +439,21 @@
                 Best decision ever! You just made me the happiest person in the world. ❤️
             </p>
             <button class="btn" style="margin-top:0; background:#27ae60; color:white;" onclick="finishProposal()">Continue ➡️</button>
+        </div>
+    </div>
+    <!-- WARNING MODAL -->
+    <div id="warning-modal" class="modal">
+        <div class="modal-content" style="border: 3px solid red;">
+            <div style="font-size: 3rem;">⚠️</div>
+            <h1 style="color:red; margin:10px 0; font-size: 2rem;">WARNING!</h1>
+            <p style="color:#555; font-size:1.1rem; margin: 15px 0; font-weight: bold;">
+                Are you sure? 🚩<br>
+                Rejecting this proposal will delete the website permanently.
+            </p>
+            <div style="display:flex; justify-content:center; gap:10px;">
+                <button class="btn" style="margin-top:0; background:#ccc; color:#333; font-size:0.9rem;" onclick="closeWarning()">Go Back 😇</button>
+                <button class="btn" style="margin-top:0; background:red; color:white; font-size:0.9rem;" onclick="triggerPrank()">Delete it 😡</button>
+            </div>
         </div>
     </div>
 
@@ -578,14 +593,18 @@
             "But that's fine. Your life, your wish, your choice."
         ];
 
+        function confirmNo() {
+            document.getElementById('warning-modal').style.display = 'flex';
+        }
+        function closeWarning() {
+            document.getElementById('warning-modal').style.display = 'none';
+        }
+
         function triggerPrank() {
-            // Hide Day 2 view immediately
-            document.getElementById('view-day2').classList.remove('active');
-            
+            closeWarning();
+            document.getElementById('view-day2').classList.remove('active');            
             const screen = document.getElementById('prank-screen');
             screen.style.display = 'flex';
-            
-            // Show first message
             nextPrankStep();
         }
 
