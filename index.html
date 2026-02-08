@@ -264,6 +264,58 @@
             transition: transform 0.2s, background 0.2s;
             animation: pulseText 2s infinite;
         }
+
+        /* --- CALENDAR WIDGET STYLES --- */
+    .calendar-widget {
+        background: white;
+        width: 180px; /* Slightly wider */
+        margin: 15px auto 25px auto;
+        border-radius: 15px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        transform: rotate(-2deg);
+        border: 4px solid white;
+        text-align: center;
+        position: relative;
+        animation: float 4s infinite ease-in-out;
+        padding-bottom: 15px; /* IMPORTANT: Gives space for the clock */
+    }
+
+    .cal-top {
+        background: linear-gradient(135deg, #ff6b81, #e84393);
+        color: white; 
+        font-weight: 900; 
+        padding: 8px 0;
+        font-size: 1.2rem; 
+        border-radius: 10px;
+        text-transform: uppercase; 
+        letter-spacing: 2px;
+    }
+
+    .cal-number {
+        font-size: 3.5rem; 
+        font-weight: 900; 
+        color: #333;
+        line-height: 1; 
+        padding: 5px 0 5px 0;
+        font-family: 'Nunito', sans-serif;
+        margin: 0;
+    }
+
+    /* DIGITAL CLOCK STYLE */
+    .digital-clock {
+        font-family: 'Courier New', Courier, monospace; 
+        font-size: 0.9rem; 
+        color: #d63031; 
+        font-weight: bold;
+        background: #f1f2f6; 
+        padding: 5px 10px;
+        margin: 0 auto;
+        border-radius: 5px;
+        width: fit-content;
+        border: 1px solid #ddd;
+        letter-spacing: 1px;
+        display: block; /* Ensures it renders */
+    }
         /* Animations */
         @keyframes fadeIn { from {opacity:0; transform: translateY(20px);} to {opacity:1; transform: translateY(0);} }
         @keyframes pulse { 0%{transform:scale(1);} 50%{transform:scale(1.05);} 100%{transform:scale(1);} }
@@ -308,8 +360,17 @@
 
     <!-- VIEW: HUB (HOME) -->
     <div id="view-hub" class="view active">
-        <h1 style="color:#333; text-shadow:none; margin-bottom:5px;">Valentine's Week 📅</h1>
-        <p style="color:#666; font-weight:bold; margin-bottom:20px;">A surprise for every day...</p>
+        <h1 style="color:#333; text-shadow:none; margin-bottom:5px;">Valentine's Week</h1>
+        <p style="color:#666; font-weight:bold; margin-bottom:10px;">A surprise for every day...</p>
+        
+    <!-- CALENDAR WIDGET WITH DIGITAL CLOCK -->
+        <div class="calendar-widget">
+            <div class="cal-top">FEB</div>
+            <div class="cal-number">11</div>
+            <!-- Digital Clock Display -->
+            <div class="digital-clock" id="countdown">00:00:00:00</div>
+        </div>
+
         <div class="hub-container" id="timeline"></div>
     </div>
 
@@ -510,6 +571,7 @@
             }
         
             renderHub();
+            startCountdown();
         };
 
         /* --- HUB LOGIC --- */
@@ -738,6 +800,61 @@
         style.innerHTML = ` .hidden { display: none !important; } `;
         document.head.appendChild(style);
 
+        function startCountdown() {
+            const now = new Date();
+            const currentYear = now.getFullYear();
+            
+            // Target: Feb 11, 00:00:00
+            let targetDate = new Date(`${currentYear}-02-11T00:00:00`);
+            
+            // Cutoff: Feb 12, 00:00:00 (When countdown should disappear)
+            const cutoffDate = new Date(`${currentYear}-02-12T00:00:00`);
+
+            // If we are already past Feb 11 THIS year, but not yet next year (unlikely during dev, but safe logic)
+            // Note: This logic assumes we want the countdown for the UPCOMING Feb 11.
+            
+            const el = document.getElementById('countdown');
+
+            function updateTimer() {
+                const currentTime = new Date();
+                
+                // 1. If it's Feb 12 or later, hide the clock text or replace it
+                if (currentTime >= cutoffDate) {
+                    if(el) el.innerHTML = "Ended";
+                    return; 
+                }
+
+                const diff = targetDate - currentTime;
+
+                // 2. If it's Feb 11 (diff is negative but before cutoff), show Happy Birthday
+                if (diff <= 0) {
+                    if(el) {
+                        el.innerHTML = "BDAY!🎂";
+                        el.style.color = "#27ae60"; // Green
+                    }
+                    return;
+                }
+                
+                // 3. Calculate Days, Hours, Minutes, Seconds
+                const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+                const m = Math.floor((diff / 1000 / 60) % 60);
+                const s = Math.floor((diff / 1000) % 60);
+
+                // 4. Format with leading zeros (e.g., 05 instead of 5)
+                const dd = d < 10 ? "0"+d : d;
+                const hh = h < 10 ? "0"+h : h;
+                const mm = m < 10 ? "0"+m : m;
+                const ss = s < 10 ? "0"+s : s;
+
+                // Digital Clock Format: 02d 14:05:30
+                if(el) el.innerHTML = `${dd}d ${hh}:${mm}:${ss}`;
+            }
+
+            // Run immediately and then every second
+            updateTimer(); 
+            setInterval(updateTimer, 1000); 
+        }
     </script>
 </body>
 </html>
