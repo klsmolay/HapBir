@@ -255,7 +255,15 @@
             border: 2px solid var(--primary);
             animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-
+        .btn-action {
+            margin-top: 15px; padding: 12px 30px; border: none;
+            background: white; color: var(--accent-pink);
+            font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 1.1rem;
+            border-radius: 50px; cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.2s, background 0.2s;
+            animation: pulseText 2s infinite;
+        }
         /* Animations */
         @keyframes fadeIn { from {opacity:0; transform: translateY(20px);} to {opacity:1; transform: translateY(0);} }
         @keyframes pulse { 0%{transform:scale(1);} 50%{transform:scale(1.05);} 100%{transform:scale(1);} }
@@ -427,6 +435,7 @@
                     Yours batman
                 </div>
             </div>
+        <a href="./reasons.html" class="btn-action" id="next-reason-btn" style="font-size:0.9rem; text-decoration: none;">See 100 reason list</a>
         </div>
     </div>
 
@@ -445,10 +454,10 @@
     <div id="warning-modal" class="modal">
         <div class="modal-content" style="border: 3px solid red;">
             <div style="font-size: 3rem;">⚠️</div>
-            <h1 style="color:red; margin:10px 0; font-size: 2rem;">WARNING!</h1>
+            <h2 style="color:red; margin:10px 0; font-size: 2rem;">WARNING!</h2>
             <p style="color:#555; font-size:1.1rem; margin: 15px 0; font-weight: bold;">
-                Are you sure? 🚩<br>
-                Rejecting this proposal will delete the website permanently.
+                Are you sure? 🥺<br>
+                Rejecting this proposal will delete the data.
             </p>
             <div style="display:flex; justify-content:center; gap:10px;">
                 <button class="btn" style="margin-top:0; background:#ccc; color:#333; font-size:0.9rem;" onclick="closeWarning()">Go Back 😇</button>
