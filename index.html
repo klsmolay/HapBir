@@ -324,6 +324,41 @@
         @keyframes beat { 0%,100%{transform:scale(1);} 50%{transform:scale(1.2);} }
         
         .hidden { display: none !important; }
+    
+                /* --- BEAUTIFUL GAME BUTTON --- */
+        .game-link-btn {
+            /* Positioning */
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 10000;
+        
+            /* Aesthetics */
+            background: linear-gradient(45deg, #ff9a9e, #ff6b81, #e84393);
+            background-size: 200% 200%;
+            color: white;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 800;
+            font-size: 0.95rem;
+            text-decoration: none;
+            letter-spacing: 0.5px;
+        
+            /* Shape */
+            padding: 12px 24px;
+            border-radius: 50px;
+            border: 2px solid rgba(255, 255, 255, 0.8); /* White border for pop */
+        
+            /* Flex for Icon alignment */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        
+            /* Effects */
+            box-shadow: 0 10px 20px rgba(232, 67, 147, 0.3);
+            backdrop-filter: blur(5px);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
     </style>
 </head>
 <body id="app-body">
@@ -497,6 +532,7 @@
                     Yours batman
                 </div>
             </div>
+            <a href="games_menu.html" class="game-link-btn">🎮 Play Games</a>
         </div>
     </div>
 
@@ -518,7 +554,7 @@
             <h2 style="color:red; margin:10px 0; font-size: 2rem;">WARNING!</h2>
             <p style="color:#555; font-size:1.1rem; margin: 15px 0; font-weight: bold;">
                 Are you sure? 🥺<br>
-                Rejecting this proposal will delete the data.
+                Rejecting this proposal will deactivate my heart.
             </p>
             <div style="display:flex; justify-content:center; gap:10px;">
                 <button class="btn" style="margin-top:0; background:#ccc; color:#333; font-size:0.9rem;" onclick="closeWarning()">Go Back 😇</button>
@@ -529,7 +565,7 @@
 
     <script>
         /* --- CONFIGURATION --- */
-        const DEV_MODE = false; // Set to FALSE for real dates
+        const DEV_MODE = false;
         
         // Dynamic Year Generation to ensure it works for current year
         const year = new Date().getFullYear();
