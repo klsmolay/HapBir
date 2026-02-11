@@ -4,21 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Spin the Wheel 🎡</title>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&family=Great+Vibes&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root {
             --bg-1: #ff9a9e;
             --bg-2: #fad0c4;
             --glass-bg: rgba(255, 255, 255, 0.25);
-            --glass-border: rgba(255, 255, 255, 0.6);
             --deep-pink: #e84393;
         }
         * { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
         
         body {
-            margin: 0; padding: 0;
-            min-height: 100vh;
+            margin: 0; padding: 0; min-height: 100vh;
             font-family: 'Nunito', sans-serif;
             background: linear-gradient(120deg, var(--bg-1) 0%, var(--bg-2) 100%);
             display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -28,106 +26,84 @@
         .container {
             width: 95%; max-width: 400px;
             background: rgba(255, 255, 255, 0.9);
-            border-radius: 20px;
-            padding: 20px; text-align: center;
+            border-radius: 20px; padding: 20px; text-align: center;
             box-shadow: 0 10px 30px rgba(0,0,0,0.15);
             position: relative;
         }
 
-        h1 { color: var(--deep-pink); margin: 0 0 5px 0; }
-        p { color: #666; margin-bottom: 20px; font-size: 0.9rem; }
+        h1 { color: var(--deep-pink); margin: 0 0 5px 0; font-family: 'Great Vibes', cursive; font-size: 2.5rem; }
+        p { color: #666; margin-bottom: 20px; font-size: 0.9rem; font-weight: bold; }
 
         /* WHEEL STYLES */
         .wheel-wrapper {
-            position: relative;
-            width: 280px; height: 280px;
-            margin: 0 auto 20px auto;
+            position: relative; width: 280px; height: 280px; margin: 0 auto 20px auto;
         }
 
         .wheel {
-            width: 100%; height: 100%;
-            border-radius: 50%;
-            border: 8px solid white;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            width: 100%; height: 100%; border-radius: 50%;
+            border: 8px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
             transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
-            position: relative;
-            overflow: hidden;
-            /* 10 Segments Conic Gradient */
+            position: relative; overflow: hidden;
             background: conic-gradient(
-                #ff9ff3 0deg 36deg, 
-                #feca57 36deg 72deg, 
-                #ff6b6b 72deg 108deg, 
-                #48dbfb 108deg 144deg, 
-                #1dd1a1 144deg 180deg, 
-                #5f27cd 180deg 216deg,
-                #ff9ff3 216deg 252deg, 
-                #feca57 252deg 288deg,
-                #ff6b6b 288deg 324deg, 
-                #48dbfb 324deg 360deg
+                #ff9ff3 0deg 36deg, #feca57 36deg 72deg, 
+                #ff6b6b 72deg 108deg, #48dbfb 108deg 144deg, 
+                #1dd1a1 144deg 180deg, #5f27cd 180deg 216deg,
+                #ff9ff3 216deg 252deg, #feca57 252deg 288deg,
+                #ff6b6b 288deg 324deg, #48dbfb 324deg 360deg
             );
         }
 
         .marker {
-            position: absolute;
-            top: -15px; left: 50%;
-            transform: translateX(-50%);
-            width: 0; height: 0;
-            border-left: 15px solid transparent;
-            border-right: 15px solid transparent;
-            border-top: 35px solid #ff3f34;
-            z-index: 10;
-            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2));
+            position: absolute; top: -15px; left: 50%; transform: translateX(-50%);
+            width: 0; height: 0; border-left: 15px solid transparent;
+            border-right: 15px solid transparent; border-top: 35px solid #ff3f34;
+            z-index: 10; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2));
         }
 
         .spin-btn {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 60px; height: 60px;
-            background: white;
-            border-radius: 50%;
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 60px; height: 60px; background: white; border-radius: 50%;
             display: flex; justify-content: center; align-items: center;
-            font-weight: 800; color: var(--deep-pink);
-            border: 4px solid #f0f0f0;
-            z-index: 11; cursor: pointer;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            font-weight: 800; color: var(--deep-pink); border: 4px solid #f0f0f0;
+            z-index: 11; cursor: pointer; box-shadow: 0 0 10px rgba(0,0,0,0.1);
             font-size: 0.9rem;
         }
         .spin-btn:active { transform: translate(-50%, -50%) scale(0.95); }
 
-        .result-box {
-            margin-top: 15px;
-            min-height: 50px;
-            display: flex; flex-direction: column; align-items: center;
-        }
+        .result-box { margin-top: 15px; min-height: 50px; display: flex; flex-direction: column; align-items: center; }
         
         .prize-text {
-            font-size: 1.5rem;
-            color: #00b894;
-            font-weight: bold;
-            display: none;
-            animation: popIn 0.5s ease;
+            font-size: 1.4rem; color: #00b894; font-weight: bold;
+            display: none; animation: popIn 0.5s ease; margin-bottom: 10px;
         }
 
         .btn-back {
-            margin-top: 10px;
-            padding: 10px 25px;
+            margin-top: 10px; padding: 10px 25px;
             background: transparent; color: #555;
             border: 2px solid #ddd; border-radius: 50px;
             font-weight: bold; cursor: pointer;
-            text-decoration: none; display: inline-block;
-            transition: 0.2s;
+            text-decoration: none; display: inline-block; transition: 0.2s;
         }
         .btn-back:hover { background: #fff; border-color: #fff; color: var(--deep-pink); }
 
+        /* DOWNLOAD BUTTON STYLE */
+        .btn-download {
+            display: none; padding: 12px 25px;
+            background: linear-gradient(45deg, #00b894, #55efc4);
+            color: white; border-radius: 50px; text-decoration: none;
+            font-weight: bold; box-shadow: 0 5px 15px rgba(0, 184, 148, 0.3);
+            animation: pulse 1.5s infinite; font-size: 0.9rem;
+        }
+
         @keyframes popIn { 0% {transform: scale(0);} 80% {transform: scale(1.1);} 100% {transform: scale(1);} }
+        @keyframes pulse { 0% {transform: scale(1);} 50% {transform: scale(1.05);} 100% {transform: scale(1);} }
     </style>
 </head>
 <body>
 
     <div class="container">
         <h1>Spin & Win</h1>
-        <p>Win a future date with me! 🎁</p>
+        <p>Win a special promise coupon! 🎁</p>
 
         <div class="wheel-wrapper">
             <div class="marker"></div>
@@ -137,29 +113,36 @@
 
         <div class="result-box">
             <div class="prize-text" id="result">You Won!</div>
-            <p id="sub-text" style="font-size:0.8rem; display:none;">Take a screenshot to redeem!</p>
+            
+            <!-- Download Button (Hidden initially) -->
+            <a id="download-link" class="btn-download">Download Voucher ⬇️</a>
+            <p id="sub-text" style="font-size:0.8rem; display:none; margin-top:5px;">Save this to redeem later!</p>
         </div>
 
         <a href="games_menu.html" class="btn-back">Back to Menu</a>
+        
+        <!-- HIDDEN CANVAS FOR GENERATING IMAGE -->
+        <canvas id="cardCanvas" width="600" height="350" style="display:none;"></canvas>
     </div>
 
     <script>
         const wheel = document.getElementById('wheel');
         const spinBtn = document.getElementById('spin-btn');
         const resultText = document.getElementById('result');
+        const downloadLink = document.getElementById('download-link');
         const subText = document.getElementById('sub-text');
 
         const prizes = [
-            "Long Drive 🚗", 
-            "Movie Date 🎬", 
-            "I Cook Dinner 🍳", 
-            "Massage 💆‍♀️", 
-            "Shopping 🛍️", 
-            "Can't scold you x5", 
-            "Yes Day ✅", 
-            "Anything you want to eat 🍕", 
-            "I will Dance with you 💃", 
-            "Surprise Gift 🎁"
+            { text: "Long Drive 🚗", color1: "#4facfe", color2: "#00f2fe" },
+            { text: "Movie Date 🎬", color1: "#ff0844", color2: "#ffb199" },
+            { text: "I Cook Food 🍳", color1: "#43e97b", color2: "#38f9d7" },
+            { text: "Massage 😋👉👈", color1: "#fccb90", color2: "#d57eeb" },
+            { text: "Shopping 🛍️", color1: "#f83600", color2: "#f9d423" },
+            { text: "Can't Scold x5", color1: "#a18cd1", color2: "#fbc2eb" },
+            { text: "Yes Day ✅", color1: "#0ba360", color2: "#3cba92" },
+            { text: "Anything you want to eat🍕", color1: "#ff9a9e", color2: "#fecfef" },
+            { text: "will Dance with you 💃", color1: "#667eea", color2: "#764ba2" },
+            { text: "Surprise Gift 🎁", color1: "#ffecd2", color2: "#fcb69f" }
         ];
 
         let isSpinning = false;
@@ -168,38 +151,125 @@
             if (isSpinning) return;
             isSpinning = true;
             resultText.style.display = 'none';
+            downloadLink.style.display = 'none';
             subText.style.display = 'none';
 
-            // Random rotation between 5 and 10 full spins
+            // Random rotation
             const spins = Math.floor(Math.random() * 5) + 5; 
             const degrees = Math.floor(Math.random() * 360);
             const totalRotate = (spins * 360) + degrees;
 
             wheel.style.transform = `rotate(${totalRotate}deg)`;
 
-            // Wait for animation to finish (4 seconds)
             setTimeout(() => {
                 isSpinning = false;
                 
+                // Calculate Prize Index
                 const actualDeg = degrees % 360;
                 const segmentSize = 360 / prizes.length;
-
                 const index = Math.floor((360 - actualDeg + (segmentSize / 2)) % 360 / segmentSize);
                 
                 const wonPrize = prizes[index] || prizes[0];
 
-                resultText.innerText = wonPrize;
+                // Show Text
+                resultText.innerText = wonPrize.text;
                 resultText.style.display = 'block';
-                subText.style.display = 'block';
                 
-                confetti({
-                    particleCount: 150,
-                    spread: 70,
-                    origin: { y: 0.6 }
-                });
+                // Generate Card
+                generateCard(wonPrize);
+
+                confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
 
             }, 4000);
         });
+
+        // --- PROFESSIONAL CARD GENERATOR (IMPROVED LAYOUT) ---
+        function generateCard(prize) {
+            const canvas = document.getElementById('cardCanvas');
+            const ctx = canvas.getContext('2d');
+
+            // 1. Clear & Background (Cream Paper)
+            ctx.clearRect(0,0, 600, 350);
+            ctx.fillStyle = "#fffbf0"; 
+            ctx.fillRect(0, 0, 600, 350);
+            
+            // 2. Decorative Side Strip (Left) - Made wider
+            const grd = ctx.createLinearGradient(0, 0, 0, 350);
+            grd.addColorStop(0, prize.color1);
+            grd.addColorStop(1, prize.color2);
+            ctx.fillStyle = grd;
+            ctx.fillRect(0, 0, 0, 350); // Wider strip (35px)
+            
+            // 3. Inner Border (Elegant Gold)
+            // Starts at x=50 (15px gap from strip), Ends at x=580 (20px margin right)
+            ctx.strokeStyle = "#d4af37"; // Gold
+            ctx.lineWidth = 2;
+            ctx.strokeRect(38, 20, 530, 310);
+            
+            // Calculate visual center of the content area
+            const centerX = 50 + (530 / 2); // 315
+
+            // 4. Header: OFFICIAL VOUCHER
+            ctx.fillStyle = "#555";
+            ctx.font = "bold 22px Arial, sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText("OFFICIAL LOVE VOUCHER", centerX, 70);
+            
+            // 5. Separator Line
+            ctx.beginPath();
+            ctx.moveTo(centerX - 120, 90);
+            ctx.lineTo(centerX + 120, 90);
+            ctx.strokeStyle = "#ddd";
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            // 6. The Prize (Hero Text)
+            ctx.fillStyle = "#333";
+            ctx.font = "bold 50px 'Times New Roman', serif"; 
+            ctx.shadowColor = "rgba(0,0,0,0.1)";
+            ctx.shadowBlur = 4;
+            ctx.fillText(prize.text, centerX, 180);
+            ctx.shadowBlur = 0;
+
+            // 7. Subtitle
+            ctx.fillStyle = "#777";
+            ctx.font = "italic 18px Arial, sans-serif";
+            ctx.fillText("This special gift is reserved exclusively for you.", centerX, 230);
+
+            // 8. Footer (Seal & Signature)
+            // Seal Position
+            const sealX = 530; 
+            
+            ctx.beginPath();
+            ctx.arc(sealX, 280, 30, 0, 2 * Math.PI);
+            ctx.fillStyle = prize.color1;
+            ctx.fill();
+            ctx.fillStyle = "#fff";
+            ctx.font = "bold 10px Arial";
+            ctx.textAlign = "center";
+            ctx.fillText("VALID", sealX, 284);
+            
+            // Date Stamp (Aligned Left relative to border)
+            const today = new Date().toLocaleDateString();
+            ctx.fillStyle = "#999";
+            ctx.font = "14px Arial";
+            ctx.textAlign = "left";
+            ctx.fillText(`Date: ${today}`, 70, 310);
+            
+            // Signature (Aligned Right relative to seal)
+            ctx.textAlign = "right";
+            ctx.font = "italic bold 18px 'Times New Roman', serif";
+            ctx.fillStyle = "#444";
+            ctx.fillText("Signed: The Legend", 490, 310);
+
+            // 9. Update Download Link
+            const dataUrl = canvas.toDataURL("image/png");
+            downloadLink.href = dataUrl;
+            downloadLink.download = `Love_Coupon_${prize.text.replace(/[^a-zA-Z]/g, "")}.png`;
+            
+            downloadLink.style.display = 'inline-block';
+            subText.style.display = 'block';
+        }
     </script>
 </body>
 </html>
