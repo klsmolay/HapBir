@@ -1,11 +1,10 @@
-<!DOCTYPE html>
-    <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-            <title>100 Reasons Why I ❤️ You</title>
-            <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
-            <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <title>100 Reasons Why I ❤️ You</title>
+    
     <style>
         :root {
             --bg-color: #fff5f7;
@@ -26,6 +25,72 @@
             color: var(--text-color);
             line-height: 1.6;
             overflow-x: hidden;
+        }
+
+        /* Music Modal Styles */
+        .music-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 90%;
+            width: 350px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border: 3px solid var(--accent-color);
+        }
+
+        .modal-content h2 {
+            color: var(--accent-color);
+            margin-bottom: 15px;
+        }
+
+        .modal-btn {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: 0.3s;
+            margin: 5px;
+        }
+
+        .modal-btn.secondary {
+            background: #ccc;
+        }
+
+        /* Floating Music Toggle */
+        .music-control {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            cursor: pointer;
+            border: 2px solid var(--accent-color);
+            font-size: 1.5rem;
         }
 
         .header {
@@ -59,7 +124,6 @@
             background: #ff4757;
         }
 
-        /* The Grid System */
         #reasons-container {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -69,7 +133,6 @@
             margin: 0 auto;
         }
 
-        /* The Reason Box */
         .reason-box {
             background: white;
             border: 1px solid rgba(255, 107, 129, 0.2);
@@ -83,13 +146,9 @@
             justify-content: center;
             align-items: center;
             min-height: 180px;
-            
-            /* Initial state for lazy loading animation */
             opacity: 0;
             transform: scale(0.9) translateY(30px);
             transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-
-            /* Floating Animation Settings */
             animation: float var(--float-duration) ease-in-out infinite alternate;
             animation-delay: var(--float-delay);
         }
@@ -120,24 +179,19 @@
             font-weight: 500;
         }
 
-        /* Floating Animation Keyframes */
         @keyframes float {
             0% { transform: translateY(0px); }
             100% { transform: translateY(-12px); }
         }
 
-        /* Loading Trigger (Sentinel) */
         #loading-sentinel {
             height: 50px;
             width: 100%;
             margin-bottom: 50px;
         }
 
-        /* Mobile Responsiveness */
         @media (max-width: 600px) {
-            .header h1 {
-                font-size: 1.8rem;
-            }
+            .header h1 { font-size: 1.8rem; }
             #reasons-container {
                 grid-template-columns: 1fr;
                 gap: 15px;
@@ -152,22 +206,69 @@
 </head>
 <body>
 
+    <!-- Music Modal -->
+    <div id="music-modal" class="music-modal">
+        <div class="modal-content">
+            <div style="font-size: 3rem; margin-bottom: 10px;">🎵</div>
+            <h2>Music?</h2>
+            <p>Would you like to listen to some music while reading these reasons? ❤️</p>
+            <div style="margin-top: 20px;">
+                <button class="modal-btn" onclick="handleMusicResponse(true)">Yes, Please! 😍</button>
+                <button class="modal-btn secondary" onclick="handleMusicResponse(false)">No, Thanks 😔</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden Audio Element -->
+    <audio id="bg-music" loop>
+        <source src="./audio/reasonPageMusic.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <!-- Music Toggle Button -->
+    <div id="music-toggle" class="music-control" onclick="toggleMusic()">🔇</div>
+
     <div class="header">
         <h1>100 Reasons Why ❤️</h1>
         <p>Because one reason just isn't enough...</p>
-        <a href="./index.html" class="back-btn">← Back</a>
+        <a href="javascript:history.back()" class="back-btn">← Back</a>
     </div>
 
-    <div id="reasons-container">
-        <!-- Reasons will be injected here by JavaScript -->
-    </div>
-
-    <!-- This element triggers the loading of the next batch when it scrolls into view -->
+    <div id="reasons-container"></div>
     <div id="loading-sentinel"></div>
 
     <script>
-        // 1. YOUR 100 REASONS ARRAY
-        // Replace the text inside these strings with your own reasons.
+        // Music Logic
+        const music = document.getElementById('bg-music');
+        const modal = document.getElementById('music-modal');
+        const toggleBtn = document.getElementById('music-toggle');
+        let isPlaying = false;
+
+        function handleMusicResponse(shouldPlay) {
+            modal.style.display = 'none';
+            if (shouldPlay) {
+                playMusic();
+            }
+        }
+
+        function playMusic() {
+            music.play();
+            isPlaying = true;
+            toggleBtn.innerText = '🎵';
+        }
+
+        function toggleMusic() {
+            if (isPlaying) {
+                music.pause();
+                toggleBtn.innerText = '🔇';
+            } else {
+                music.play();
+                toggleBtn.innerText = '🎵';
+            }
+            isPlaying = !isPlaying;
+        }
+
+        // Reasons Data
         const allReasons = [
             "Your smile makes my day.", "You are my safe place.",
             "The way you look at me.", "You tolerate my bad jokes.",
@@ -224,66 +325,39 @@
         const container = document.getElementById('reasons-container');
         const sentinel = document.getElementById('loading-sentinel');
         let currentIndex = 0;
-        const batchSize = 10; // Loads 12 boxes at a time for smoothness
+        const batchSize = 12;
 
-        // Function to create a single reason box
         function createReasonBox(text, index) {
             const box = document.createElement('div');
             box.className = 'reason-box';
-            
-            // Randomize floating animation
             const duration = (2 + Math.random() * 2).toFixed(2) + 's';
             const delay = (Math.random() * -5).toFixed(2) + 's';
             box.style.setProperty('--float-duration', duration);
             box.style.setProperty('--float-delay', delay);
-
             box.innerHTML = `
                 <div class="number">#${index + 1}</div>
                 <div class="heart-icon">❤️</div>
                 <div class="reason-text">${text}</div>
             `;
-            
             return box;
         }
 
-        // Function to load the next batch of reasons
         function loadBatch() {
             const end = Math.min(currentIndex + batchSize, allReasons.length);
-            
             for (let i = currentIndex; i < end; i++) {
                 const box = createReasonBox(allReasons[i], i);
                 container.appendChild(box);
-                
-                // Trigger the entry animation with a tiny delay per box for a "staggered" look
-                setTimeout(() => {
-                    box.classList.add('visible');
-                }, (i - currentIndex) * 100);
+                setTimeout(() => box.classList.add('visible'), (i - currentIndex) * 100);
             }
-            
             currentIndex = end;
-
-            // If we've loaded everything, remove the sentinel
-            if (currentIndex >= allReasons.length) {
-                sentinel.remove();
-            }
+            if (currentIndex >= allReasons.length) sentinel.remove();
         }
 
-        // Intersection Observer for Lazy Loading
         const observer = new IntersectionObserver((entries) => {
-            if (entries[0].isIntersecting) {
-                loadBatch();
-            }
-        }, {
-            rootMargin: '100px',
-            threshold: 0.1
-        });
+            if (entries[0].isIntersecting) loadBatch();
+        }, { rootMargin: '100px', threshold: 0.1 });
 
-        // Initialize
-        if (allReasons.length > 0) {
-            observer.observe(sentinel);
-        } else {
-            container.innerHTML = "<p>No reasons found. Please add them to the array!</p>";
-        }
+        if (allReasons.length > 0) observer.observe(sentinel);
 
     </script>
 </body>
