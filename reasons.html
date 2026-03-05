@@ -1,330 +1,290 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>100 Reasons Why ❤️</title>
-    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+            <title>100 Reasons Why I ❤️ You</title>
+            <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+            <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root {
-            --bg-1: #ff9a9e; --bg-2: #fad0c4;
-            --accent: #ff6b81; --deep: #e84393;
-            --text: #444;
+            --bg-color: #fff5f7;
+            --accent-color: #ff6b81;
+            --text-color: #4a4a4a;
+            --box-shadow: 0 10px 20px rgba(255, 107, 129, 0.1);
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
-        
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
-            height: 100dvh; width: 100vw; overflow: hidden;
-            font-family: 'Nunito', sans-serif;
-            background: linear-gradient(135deg, var(--bg-1) 0%, var(--bg-2) 100%);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            position: relative;
+            background-color: var(--bg-color);
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
         }
 
-        /* --- Floating Hearts Background --- */
-        .heart-bg {
-            position: absolute; color: rgba(255, 255, 255, 0.4);
-            animation: floatUp linear infinite; z-index: 0;
-        }
-        @keyframes floatUp {
-            0% { transform: translateY(110vh) scale(0); opacity: 0; }
-            50% { opacity: 0.8; }
-            100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
-        }
-
-        /* --- Main UI --- */
         .header {
-            text-align: center; z-index: 10; margin-bottom: 20px;
-            position: relative;
-        }
-        .title {
-            font-family: 'Great Vibes', cursive; font-size: 3.5rem; color: white;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1); margin: 0;
-        }
-        .subtitle {
-            color: white; font-weight: bold; font-size: 1rem; margin-top: 5px; opacity: 0.9;
-        }
-
-        /* --- List Box (Static Container) --- */
-        .list-container {
-            position: relative;
-            width: 90%;
-            max-width: 400px;
-            height: 60vh; /* Box height */
-            background: rgba(255, 255, 255, 0.25);
-            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            border: 2px solid rgba(255, 255, 255, 0.6);
-            border-radius: 20px;
-            padding: 20px;
-            overflow-y: auto; /* Allows scrolling */
-            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
-            z-index: 5;
-            /* REMOVED: Animation on the main box */
-        }
-
-        /* List Item Wrapper (Handles Slide-In) */
-        .reason-wrapper {
-            opacity: 0; /* Hidden initially for animation */
-            animation: slideIn 0.6s forwards;
-            margin-bottom: 15px;
-        }
-
-        /* List Item Visuals (Handles Gentle Float) */
-        .reason-item {
-            background: rgba(255, 255, 255, 0.9);
-            padding: 15px 20px;
-            border-radius: 12px;
-            color: var(--deep);
-            font-family: 'Great Vibes', cursive;
-            font-size: 1.6rem;
             text-align: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            border: 1px solid white;
-            /* ADDED: Subtle floating animation for individual boxes */
-            animation: floatItem 3s ease-in-out infinite;
+            padding: 50px 20px;
+            background: white;
+            margin-bottom: 30px;
+            box-shadow: var(--box-shadow);
         }
 
-        .reason-item span {
-            display: block;
-            font-family: 'Nunito', sans-serif;
-            font-size: 0.8rem;
-            color: #aaa;
-            font-weight: bold;
-            margin-bottom: 5px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        .header h1 {
+            color: var(--accent-color);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
         }
 
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes floatItem {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-3px); } /* Very subtle movement */
-        }
-
-        /* Custom Scrollbar */
-        .list-container::-webkit-scrollbar { width: 6px; }
-        .list-container::-webkit-scrollbar-thumb { 
-            background: rgba(255,255,255,0.6); 
-            border-radius: 10px; 
-        }
-
-        /* --- Navigation --- */
-        .btn-home {
-            position: absolute; bottom: 30px;
-            background: rgba(255,255,255,0.25); border: 2px solid white;
-            color: black; padding: 12px 30px; border-radius: 50px;
-            font-weight: 800; text-decoration: none; z-index: 10;
-            transition: 0.2s; backdrop-filter: blur(5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-        .btn-home:active { transform: scale(0.95); background: rgba(255,255,255,0.4); }
-
-                /* --- BEAUTIFUL MUSIC MODAL --- */
-        #music-modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.6); /* Dark dimmed background */
-            backdrop-filter: blur(8px); /* Blur effect on background */
-            display: flex; justify-content: center; align-items: center;
-            z-index: 20000;
-            opacity: 0; animation: fadeIn 0.5s forwards; /* Smooth fade in */
-        }
-
-        .music-content {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 30px;
-            border-radius: 25px;
-            width: 85%; max-width: 350px;
-            text-align: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-            border: 2px solid #ff9ff3;
-            transform: scale(0.8);
-            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-        }
-
-        .music-icon {
-            font-size: 3rem; margin-bottom: 10px;
-            animation: float 3s ease-in-out infinite;
+        .back-btn {
             display: inline-block;
-        }
-
-        .music-btn {
-            padding: 12px 25px; border: none; border-radius: 50px;
-            font-size: 1rem; font-weight: bold; cursor: pointer;
-            transition: transform 0.2s;
-            font-family: 'Nunito', sans-serif;
-        }
-        .music-btn:active { transform: scale(0.95); }
-
-        .btn-yes-music {
-            background: linear-gradient(45deg, #ff6b81, #ff9ff3);
+            margin-top: 15px;
+            padding: 8px 20px;
+            background: var(--accent-color);
             color: white;
-            box-shadow: 0 5px 15px rgba(255, 107, 129, 0.4);
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: bold;
+            transition: 0.3s;
         }
 
-        .btn-no-music {
-            background: #f1f2f6; color: #636e72;
+        .back-btn:hover {
+            transform: scale(1.05);
+            background: #ff4757;
         }
 
-        @keyframes fadeIn { to { opacity: 1; } }
-        @keyframes popIn { to { transform: scale(1); } }
-        @keyframes float { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-10px);} }
-    </style>
+        /* The Grid System */
+        #reasons-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            padding: 20px;
+            max-width: 1300px;
+            margin: 0 auto;
+        }
 
+        /* The Reason Box */
+        .reason-box {
+            background: white;
+            border: 1px solid rgba(255, 107, 129, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: var(--box-shadow);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 180px;
+            
+            /* Initial state for lazy loading animation */
+            opacity: 0;
+            transform: scale(0.9) translateY(30px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+
+            /* Floating Animation Settings */
+            animation: float var(--float-duration) ease-in-out infinite alternate;
+            animation-delay: var(--float-delay);
+        }
+
+        .reason-box.visible {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+
+        .reason-box .number {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            opacity: 0.5;
+        }
+
+        .reason-box .heart-icon {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: var(--accent-color);
+        }
+
+        .reason-text {
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        /* Floating Animation Keyframes */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            100% { transform: translateY(-12px); }
+        }
+
+        /* Loading Trigger (Sentinel) */
+        #loading-sentinel {
+            height: 50px;
+            width: 100%;
+            margin-bottom: 50px;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            #reasons-container {
+                grid-template-columns: 1fr;
+                gap: 15px;
+                padding: 15px;
+            }
+            .reason-box {
+                min-height: 140px;
+                padding: 20px;
+            }
+        }
     </style>
 </head>
 <body>
 
-    <div id="hearts-container"></div>
-
     <div class="header">
-        <h1 class="title">100 Reasons Why I ❤️ U</h1>
-        <div class="subtitle">Scroll to read my heart 👇</div>
+        <h1>100 Reasons Why ❤️</h1>
+        <p>Because one reason just isn't enough...</p>
+        <a href="./index.html" class="back-btn">← Back</a>
     </div>
 
-    <!-- Static List Box -->
-    <div class="list-container" id="reason-list">
-        <!-- Items inserted by JS -->
+    <div id="reasons-container">
+        <!-- Reasons will be injected here by JavaScript -->
     </div>
 
-    <a href="index.html" class="btn-home">🏠 Back to Home</a>
+    <!-- This element triggers the loading of the next batch when it scrolls into view -->
+    <div id="loading-sentinel"></div>
 
-        <!-- HIDDEN AUDIO PLAYER -->
-    <audio id="bg-music" loop>
-        <source src="./audio/reasonPageMusic.mp3" type="audio/mpeg">
-    </audio>
-
-    <div id="music-modal">
-        <div class="music-content">
-            <div class="music-icon">🎵</div>
-            <h1 style="font-family:'Great Vibes'; color:#e84393; font-size:2.5rem; margin:0;">Music?</h1>
-            <p style="color:#666; font-size:1.1rem; margin:15px 0 25px 0; line-height:1.5;">
-                Gudiya would you like to play song while you explore? ✨
-            </p>
-            <div style="display:flex; justify-content:center; gap:15px;">
-                <button class="music-btn btn-no-music" onclick="handleMusic(false)">No, thanks 🤬</button>
-                <button class="music-btn btn-yes-music" onclick="handleMusic(true)">Yes, Play! 🥰</button>
-            </div>
-        </div>
-    </div>
     <script>
-        // --- 100 Reasons Datas---
-        const REASONS = [
-                    "Your smile makes my day.", "You are my safe place.",
-                   "The way you look at me.", "You tolerate my bad jokes.",
-                   "Your kindness to everyone.", "How cute you look when angry.",
-                   "You are my best friend.", "Your voice heals me.",
-                   "We are perfect together.", "You make me a better person.",
-                   "The way you say my name.", "Your laugh is my favorite sound.",
-                   "You always believe in me.", "You give the best hugs even though you are the only person i have hug.",
-                   "How much you care about us.", "You are the most beautiful girl, my girl.",
-                   "Your silly side, nautanki, nakharey ....", "The way you play with my hair.",
-                   "You understand me without words.", "You are my happy place.",
-                   "I love your, no reason needed.", "You are my princess.",
-                   "How you handle my irritation.", "You are my cutie pie.",
-                   "Your come in my dream.", "I want to eat you.",
-                   "You inspire me.", "Your morning texts.",
-                   "How you listen to my words.", "You are my lucky charm.",
-                   "The way you hold my hand.", "You are incredibly smart.",
-                   "Your passion for things you love.", "You make boring days fun.",
-                   "I love making memories with you.", "You are my dream come true.",
-                   "How you cheer me up.", "Your confidence.",
-                   "You have the purest heart.", "I love your drama (sometimes Annoying😂).",
-                   "You are worth every effort.", "How we can talk for hours.",
-                   "The way you support my dreams.", "You are my sunshine.",
-                   "I love annoying you.", "Your patience with me.",
-                   "How you take care of me.", "You are simply adorable.",
-                   "I love your scent.", "You make me feel loved.",
-                   "You are my forever.", "Your ocean like eyes.",
-                   "Love how i prank you.", "You are my home.",
-                   "I love your honesty.", "You make my heart race.",
-                   "I want to grow old with you.", "You are my motivation.",
-                   "Your cute texting habits.", "You are my Gudiya.",
-                   "How strong you are.", "I love your chicks, want to kiss them.",
-                   "You complete me.", "Every moment with you is magic.",
-                   "I want to fight with you (WWE💪).", "You are my everything.",
-                   "How you scold me.", "Your innocence.",
-                   "You make the world beautiful.", "I love watching you sleep.",
-                   "You are the reason I smile.", "Your unconditional love.",
-                   "I love how little you are.", "You are my greatest gift.",
-                   "How you make me feel strong.", "want to cuddle.",
-                   "I love your cooking (trying to do 😂).", "You are my soulmate.",
-                   "How you blush.", "I love stealing glances at you.",
-                   "You make problems disappear.", "I love eye contact compition with you (i loss every time🥺).",
-                   "I love our inside jokes.", "Because i am god 😂.",
-                   "How you irritat me.", "I love your energy.",
-                   "You are my pride.", "I love showing you off.",
-                   "You make me want to be better.", "Your loyalty.",
-                   "Because you are chudail.", "You are my peace.",
-                   "How you eat food.", "I love your imperfections.",
-                   "You are my greatest adventure.", "I love your touch.",
-                   "You are the best thing in my life.", "I love you more than words.",
-                   "Because you are mine, my girl.", "I choose you, every single day."
+        // 1. YOUR 100 REASONS ARRAY
+        // Replace the text inside these strings with your own reasons.
+        const allReasons = [
+            "Your smile makes my day.", "You are my safe place.",
+            "The way you look at me.", "You tolerate my bad jokes.",
+            "Your kindness to everyone.", "How cute you look when angry.",
+            "You are my best friend.", "Your voice heals me.",
+            "We are perfect together.", "You make me a better person.",
+            "The way you say my name.", "Your laugh is my favorite sound.",
+            "You always believe in me.", "You give the best hugs even though you are the only person i have hug.",
+            "How much you care about us.", "You are the most beautiful girl, my girl.",
+            "Your silly side, nautanki, nakharey ....", "The way you play with my hair.",
+            "You understand me without words.", "You are my happy place.",
+            "I love your, no reason needed.", "You are my princess.",
+            "How you handle my irritation.", "You are my cutie pie.",
+            "Your come in my dream.", "I want to eat you.",
+            "You inspire me.", "Your morning texts.",
+            "How you listen to my words.", "You are my lucky charm.",
+            "The way you hold my hand.", "You are incredibly smart.",
+            "Your passion for things you love.", "You make boring days fun.",
+            "I love making memories with you.", "You are my dream come true.",
+            "How you cheer me up.", "Your confidence.",
+            "You have the purest heart.", "I love your drama (sometimes Annoying😂).",
+            "You are worth every effort.", "How we can talk for hours.",
+            "The way you support my dreams.", "You are my sunshine.",
+            "I love annoying you.", "Your patience with me.",
+            "How you take care of me.", "You are simply adorable.",
+            "I love your scent.", "You make me feel loved.",
+            "You are my forever.", "Your ocean like eyes (it deserves to be mentioned twice!).",
+            "Love how i prank you.", "You are my home.",
+            "I love your honesty.", "You make my heart race.",
+            "I want to grow old with you.", "You are my motivation.",
+            "Your cute texting habits.", "You are my Gudiya.",
+            "How strong you are.", "I love your chicks, want to kiss them.",
+            "You complete me.", "Every moment with you is magic.",
+            "I want to fight with you (WWE💪).", "You are my everything.",
+            "How you scold me.", "Your innocence.",
+            "You make the world beautiful.", "I love watching you sleep.",
+            "You are the reason I smile.", "Your unconditional love.",
+            "I love how little you are.", "You are my greatest gift.",
+            "How you make me feel strong.", "want to cuddle.",
+            "I love your cooking (trying to do 😂).", "You are my soulmate.",
+            "How you blush.", "I love stealing glances at you.",
+            "You make problems disappear.", "I love eye contact compition with you (i loss every time🥺).",
+            "I love our inside jokes.", "Because i am god 😂.",
+            "How you irritat me.", "I love your energy.",
+            "You are my pride.", "I love showing you off.",
+            "You make me want to be better.", "Your loyalty.",
+            "Because you are chudail.", "You are my peace.",
+            "How you eat food (chocolate😋).", "I love your imperfections.",
+            "You are my greatest adventure.", "I love your touch.",
+            "You are the best thing in my life.", "I love you more than words.",
+            "Because you are mine, my girl.", "I choose you, every single day."
         ];
 
-window.onload = () => {
+        const container = document.getElementById('reasons-container');
+        const sentinel = document.getElementById('loading-sentinel');
+        let currentIndex = 0;
+        const batchSize = 10; // Loads 12 boxes at a time for smoothness
 
-    const listContainer = document.getElementById('reason-list');
+        // Function to create a single reason box
+        function createReasonBox(text, index) {
+            const box = document.createElement('div');
+            box.className = 'reason-box';
+            
+            // Randomize floating animation
+            const duration = (2 + Math.random() * 2).toFixed(2) + 's';
+            const delay = (Math.random() * -5).toFixed(2) + 's';
+            box.style.setProperty('--float-duration', duration);
+            box.style.setProperty('--float-delay', delay);
 
-    function handleMusic(play) {
-        const modal = document.getElementById('music-modal');
-        const audio = document.getElementById('bg-music');
-
-        if (play) {
-            audio.volume = 0.8;
-            audio.play().catch(e => console.log("Audio error:", e));
+            box.innerHTML = `
+                <div class="number">#${index + 1}</div>
+                <div class="heart-icon">❤️</div>
+                <div class="reason-text">${text}</div>
+            `;
+            
+            return box;
         }
 
-        modal.style.transition = "opacity 0.5s";
-        modal.style.opacity = "0";
-        setTimeout(() => modal.style.display = "none", 500);
-    }
+        // Function to load the next batch of reasons
+        function loadBatch() {
+            const end = Math.min(currentIndex + batchSize, allReasons.length);
+            
+            for (let i = currentIndex; i < end; i++) {
+                const box = createReasonBox(allReasons[i], i);
+                container.appendChild(box);
+                
+                // Trigger the entry animation with a tiny delay per box for a "staggered" look
+                setTimeout(() => {
+                    box.classList.add('visible');
+                }, (i - currentIndex) * 100);
+            }
+            
+            currentIndex = end;
 
-    function spawnHearts() {
-        const container = document.getElementById('hearts-container');
+            // If we've loaded everything, remove the sentinel
+            if (currentIndex >= allReasons.length) {
+                sentinel.remove();
+            }
+        }
 
-        setInterval(() => {
-            const heart = document.createElement('div');
-            heart.classList.add('heart-bg');
-            heart.innerText = ['❤️', '💖', '🌸', '💘'][Math.floor(Math.random()*4)];
-            heart.style.left = Math.random() * 100 + 'vw';
-            heart.style.fontSize = Math.random() * 20 + 10 + 'px';
-            heart.style.animationDuration = Math.random() * 5 + 5 + 's';
-
-            container.appendChild(heart);
-            setTimeout(() => heart.remove(), 10000);
-        }, 300);
-    }
-
-    function initList() {
-        spawnHearts();
-
-        REASONS.forEach((text, index) => {
-            const wrapper = document.createElement('div');
-            wrapper.className = 'reason-wrapper';
-            wrapper.style.animationDelay = `${index * 0.1}s`;
-
-            const item = document.createElement('div');
-            item.className = 'reason-item';
-            item.innerHTML = `
-                <span>Reason #${index + 1}</span>
-                ${text}
-            `;
-
-            wrapper.appendChild(item);
-            listContainer.appendChild(wrapper);
+        // Intersection Observer for Lazy Loading
+        const observer = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting) {
+                loadBatch();
+            }
+        }, {
+            rootMargin: '100px',
+            threshold: 0.1
         });
-    }
 
-    // make button onclick work
-    window.handleMusic = handleMusic;
+        // Initialize
+        if (allReasons.length > 0) {
+            observer.observe(sentinel);
+        } else {
+            container.innerHTML = "<p>No reasons found. Please add them to the array!</p>";
+        }
 
-    initList();
-};
     </script>
 </body>
 </html>

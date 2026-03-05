@@ -565,332 +565,277 @@
 
     <script>
         /* --- CONFIGURATION --- */
-        const DEV_MODE = true;
-        
-        // Dynamic Year Generation to ensure it works for current year
-        const year = new Date().getFullYear();
-        
-        // Strict Dates (Year-Month-Day)
-        const DATES = {
-            1: `${year}-02-07`, 2: `${year}-02-08`, 3: `${year}-02-09`, 4: `${year}-02-10`,
-            5: `${year}-02-11`, 6: `${year}-02-12`, 7: `${year}-02-13`, 8: `${year}-02-14`
-        };
+/* --- CONFIGURATION --- */
+    const DEV_MODE = true; 
+    
+    // Target is now strictly Feb 11, 2027
+    const BIRTHDAY_TARGET = "2027-02-11T00:00:00";
 
-        const TIMELINE = [
-            { id: 1, title: "Rose Day", theme: "var(--rose-bg)", icon: "🌹" },
-            { id: 2, title: "Propose Day", theme: "var(--propose-bg)", icon: "💍" },
-            { id: 3, title: "Chocolate Day", theme: "var(--choco-bg)", icon: "🍫" },
-            { id: 4, title: "Teddy Day", theme: "var(--teddy-bg)", icon: "🧸" },
-            { id: 5, title: "Promise + B'Day", theme: "var(--promise-bg)", icon: "🎂" },
-            { id: 6, title: "Hug Day", theme: "var(--hug-bg)", icon: "🤗" },
-            { id: 7, title: "Kiss Day", theme: "var(--kiss-bg)", icon: "💋" },
-            { id: 8, title: "Valentine's Day", theme: "var(--val-bg)", icon: "❤️" }
-        ];
+    const TIMELINE = [
+        { id: 1, title: "Rose Day", theme: "var(--rose-bg)", icon: "🌹" },
+        { id: 2, title: "Propose Day", theme: "var(--propose-bg)", icon: "💍" },
+        { id: 3, title: "Chocolate Day", theme: "var(--choco-bg)", icon: "🍫" },
+        { id: 4, title: "Teddy Day", theme: "var(--teddy-bg)", icon: "🧸" },
+        { id: 5, title: "Promise + B'Day", theme: "var(--promise-bg)", icon: "🎂" },
+        { id: 6, title: "Hug Day", theme: "var(--hug-bg)", icon: "🤗" },
+        { id: 7, title: "Kiss Day", theme: "var(--kiss-bg)", icon: "💋" },
+        { id: 8, title: "Valentine's Day", theme: "var(--val-bg)", icon: "❤️" }
+    ];
 
+    /* --- INIT & LOCK CHECK --- */
+    window.onload = () => {
+        const lockTimestamp = localStorage.getItem('prank_lock_expiry');
+        const currentTime = Date.now();
 
-        /* --- INIT --- */
-        window.onload = () => {
-            // 1. Check for Prank Lock
-            const lockDate = localStorage.getItem('prank_lock_until');
-
-            if (lockDate && !DEV_MODE) {
-                const todayStr = new Date().toISOString().split('T')[0]; // Get YYYY-MM-DD
-
-                // If Today is BEFORE the unlock date (e.g. it's Feb 8 or 9, but unlocks Feb 10)
-                if (todayStr < lockDate) {
-                    showDeathScreen();
-                    return; // Stop everything else from loading
-                } else {
-                    // The wait is over! Remove the lock automatically
-                    localStorage.removeItem('prank_lock_until');
-                }
-            }
-        
-            renderHub();
-            startCountdown();
-        };
-
-        /* --- HUB LOGIC --- */
-        function renderHub() {
-            const container = document.getElementById('timeline');
-            container.innerHTML = '';
-            
-            // Get local date string YYYY-MM-DD to avoid timezone issues
-            const now = new Date();
-            const year = now.getFullYear();
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const day = String(now.getDate()).padStart(2, '0');
-            const todayStr = `${year}-${month}-${day}`;
-
-            TIMELINE.forEach(day => {
-                const unlockDateStr = DATES[day.id];
-                const isUnlocked = DEV_MODE || (todayStr >= unlockDateStr);
-                const isCompleted = localStorage.getItem(`day${day.id}_complete`) === 'true';
-
-                const card = document.createElement('div');
-                card.className = `day-card ${isUnlocked ? 'unlocked' : 'locked'}`;
-                card.onclick = () => {
-                    if(isUnlocked) openDay(day.id, day.theme);
-                    else {
-                        // Show Modal instead of alert
-                        // Format date for display
-                        const dateObj = new Date(unlockDateStr);
-                        const options = { month: 'short', day: 'numeric' };
-                        const niceDate = dateObj.toLocaleDateString('en-US', options);
-                        
-                        document.getElementById('locked-msg').innerHTML = `Shhh! Gudiya🤫 Good things take time.<br><br>Come back on <b>${niceDate}</b>!`;
-                        document.getElementById('locked-modal').style.display = 'flex';
-                    }
-                };
-
-                // Add "Opened" Badge if completed
-                let badge = isCompleted ? '<div class="opened-badge">OPENED ✅</div>' : '';
-
-                card.innerHTML = `
-                    ${badge}
-                    <div class="day-info">
-                        <h3>${day.title}</h3>
-                        <p>${unlockDateStr}</p>
-                    </div>
-                    <div class="day-icon">${isUnlocked ? day.icon : '🔒'}</div>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        function openDay(id, theme) {
-            document.body.style.background = theme;
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.getElementById(`view-day${id}`).classList.add('active');
-        }
-
-        function goHome() {
-            document.body.style.background = "#fff";
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.getElementById('view-hub').classList.add('active');
-            renderHub();
-        }
-
-        function completeDay(id) {
-            localStorage.setItem(`day${id}_complete`, 'true');
-            // Do not auto-redirect. Let user explore.
-            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-        }
-
-        /* --- DAY 1 --- */
-        function bloomRose(el) {
-            if(el.classList.contains('bloomed')) return;
-            el.classList.add('bloomed');
-            confetti({ colors: ['#ff0000', '#ff6b81'], particleCount: 50 });
-            document.getElementById('d1-msg').classList.remove('hidden');
-            completeDay(1);
-        }
-
-        /* --- DAY 2: THE PRANK LOGIC (UPDATED) --- */
-        function openRingBox(el) {
-            if(el.classList.contains('open')) return;
-            el.classList.add('open');
-            setTimeout(() => document.getElementById('proposal-q').classList.remove('hidden'), 500);
-        }
-        
-        let prankStep = 0;
-        const prankMessages = [
-            "Ohh...",
-            "I was doubting but never sure...",
-            "But that's fine. Your life, your wish, your choice."
-        ];
-
-        function confirmNo() {
-            document.getElementById('warning-modal').style.display = 'flex';
-        }
-        function closeWarning() {
-            document.getElementById('warning-modal').style.display = 'none';
-        }
-
-        function triggerPrank() {
-            closeWarning();
-            document.getElementById('view-day2').classList.remove('active');            
-            const screen = document.getElementById('prank-screen');
-            screen.style.display = 'flex';
-            nextPrankStep();
-        }
-
-        function nextPrankStep() {
-            const container = document.getElementById('prank-msg-container');
-            const btn = document.getElementById('prank-next-btn');
-            
-            if (prankStep < prankMessages.length) {
-                // Add new message to list
-                const msg = document.createElement('p');
-                msg.className = 'prank-line';
-                msg.innerText = prankMessages[prankStep];
-                container.appendChild(msg);
-                prankStep++;
-            } else {
-                // Final Step: Countdown
-                btn.style.display = 'none'; // Hide button
-                const msg = document.createElement('p');
-                msg.className = 'prank-line';
-                msg.style.color = "red";
-                msg.innerText = "Deleting website data in...";
-                container.appendChild(msg);
-                
-                const cd = document.getElementById('countdown-display');
-                cd.style.display = 'block';
-                
-                let count = 3;
-                cd.innerText = count;
-                const timer = setInterval(() => {
-                    count--;
-                    cd.innerText = count;
-                    if(count <= 0) {
-                        clearInterval(timer);
-
-                        // --- FIXED LINE BELOW (Added Backticks ` `) ---
-                        const currentYear = new Date().getFullYear();
-                        const unlockDate = `${currentYear}-02-10`; 
-                        
-                        localStorage.setItem('prank_lock_until', unlockDate);
-
-                        showDeathScreen();
-                    }
-                }, 1000);
-            }
-        }
-
-        function showDeathScreen() {
+        // 1. Check for 42-Hour Hard Lock
+        if (lockTimestamp && currentTime < parseInt(lockTimestamp)) {
+            // Force the death screen and hide the app UI
+            document.getElementById('view-hub').style.display = 'none';
             document.getElementById('prank-screen').style.display = 'none';
-            document.getElementById('death-screen').style.display = 'flex';
+            showDeathScreen();
+            
+            // Log remaining time for debugging (optional)
+            const remaining = Math.round((parseInt(lockTimestamp) - currentTime) / (1000 * 60 * 60));
+            console.log(`Lock active for ${remaining} more hours.`);
+            return; 
+        } else if (lockTimestamp) {
+            // Lock expired, clean up
+            localStorage.removeItem('prank_lock_expiry');
         }
+    
+        renderHub();
+        startCountdown();
+    };
 
-        /* Updated Proposal Logic */
-        function acceptProposal() {
-            // 1. Trigger massive confetti
-            confetti({ particleCount: 150, spread: 100, origin: { y: 0.6 } });
+    /* --- HUB LOGIC (Unlocked for all) --- */
+    function renderHub() {
+        const container = document.getElementById('timeline');
+        container.innerHTML = '';
+        
+        TIMELINE.forEach(day => {
+            const isCompleted = localStorage.getItem(`day${day.id}_complete`) === 'true';
 
-            // 2. Show the beautiful popup instead of alert
-            document.getElementById('yes-modal').style.display = 'flex';
+            const card = document.createElement('div');
+            card.className = `day-card unlocked`; // Forced all to be unlocked
+            card.onclick = () => openDay(day.id, day.theme);
+
+            let badge = isCompleted ? '<div class="opened-badge">OPENED ✅</div>' : '';
+
+            card.innerHTML = `
+                ${badge}
+                <div class="day-info">
+                    <h3>${day.title}</h3>
+                    <p>Valentine's Special</p>
+                </div>
+                <div class="day-icon">${day.icon}</div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    function openDay(id, theme) {
+        document.body.style.background = theme;
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        document.getElementById(`view-day${id}`).classList.add('active');
+    }
+
+    function goHome() {
+        document.body.style.background = "#fff";
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        document.getElementById('view-hub').classList.add('active');
+        renderHub();
+    }
+
+    function completeDay(id) {
+        localStorage.setItem(`day${id}_complete`, 'true');
+        confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+    }
+
+    /* --- DAY 1 --- */
+    function bloomRose(el) {
+        if(el.classList.contains('bloomed')) return;
+        el.classList.add('bloomed');
+        confetti({ colors: ['#ff0000', '#ff6b81'], particleCount: 50 });
+        document.getElementById('d1-msg').classList.remove('hidden');
+        completeDay(1);
+    }
+
+    /* --- DAY 2: THE 42-HOUR PRANK --- */
+    function openRingBox(el) {
+        if(el.classList.contains('open')) return;
+        el.classList.add('open');
+        setTimeout(() => document.getElementById('proposal-q').classList.remove('hidden'), 500);
+    }
+    
+    let prankStep = 0;
+    const prankMessages = [
+        "Ohh...",
+        "I was doubting but never sure...",
+        "But that's fine. Your life, your wish, your choice."
+    ];
+
+    function confirmNo() {
+        document.getElementById('warning-modal').style.display = 'flex';
+    }
+    function closeWarning() {
+        document.getElementById('warning-modal').style.display = 'none';
+    }
+
+    function triggerPrank() {
+        closeWarning();
+        document.getElementById('view-day2').classList.remove('active');            
+        const screen = document.getElementById('prank-screen');
+        screen.style.display = 'flex';
+        nextPrankStep();
+    }
+
+    function nextPrankStep() {
+        const container = document.getElementById('prank-msg-container');
+        const btn = document.getElementById('prank-next-btn');
+        
+        if (prankStep < prankMessages.length) {
+            const msg = document.createElement('p');
+            msg.className = 'prank-line';
+            msg.innerText = prankMessages[prankStep];
+            container.appendChild(msg);
+            prankStep++;
+        } else {
+            btn.style.display = 'none';
+            const msg = document.createElement('p');
+            msg.className = 'prank-line';
+            msg.style.color = "red";
+            msg.innerText = "Deleting website data in...";
+            container.appendChild(msg);
+            
+            const cd = document.getElementById('countdown-display');
+            cd.style.display = 'block';
+            
+            let count = 3;
+            cd.innerText = count;
+            const timer = setInterval(() => {
+                count--;
+                cd.innerText = count;
+                if(count <= 0) {
+                    clearInterval(timer);
+                    
+                    // Set lock for 42 hours from NOW
+                    const expiry = Date.now() + (42 * 60 * 60 * 1000); 
+                    localStorage.setItem('prank_lock_expiry', expiry);
+
+                    showDeathScreen();
+                }
+            }, 1000);
         }
+    }
 
-        function finishProposal() {
-            // Close modal and save progress
-            document.getElementById('yes-modal').style.display = 'none';
-            completeDay(2);
-        }
+    function showDeathScreen() {
+        document.getElementById('prank-screen').style.display = 'none';
+        document.getElementById('death-screen').style.display = 'flex';
+        // Add absolute block to body to prevent scrolling/interaction
+        document.body.style.overflow = 'hidden';
+    }
 
-        /* --- DAY 3 --- */
-        function unwrapChoco(el) {
-            if(el.classList.contains('unwrapped')) return;
-            el.classList.add('unwrapped');
-            confetti({ shapes: ['square'], colors: ['#ffd700'], particleCount: 30 });
-            document.getElementById('day3-msg').classList.remove('hidden');
-            completeDay(3);
-        }
+    function acceptProposal() {
+        confetti({ particleCount: 150, spread: 100, origin: { y: 0.6 } });
+        document.getElementById('yes-modal').style.display = 'flex';
+    }
 
-        /* --- DAY 5 --- */
-        function lockPromise(el) {
-            if(el.classList.contains('locked')) return;
-            el.classList.add('locked');
-            setTimeout(() => {
-                el.querySelector('.h-left').innerText = "🤞";
-                el.querySelector('.h-right').innerText = "🤞";
-                document.getElementById('bday-unlock').classList.remove('hidden');
-                confetti();
-            }, 500);
-            completeDay(5); // Mark done when promise locked
-        }
+    function finishProposal() {
+        document.getElementById('yes-modal').style.display = 'none';
+        completeDay(2);
+    }
 
-        /* --- DAY 6 --- */
-        function startHug() {
-            document.getElementById('hug-display').classList.add('hug-active');
-            if(navigator.vibrate) navigator.vibrate(200);
-        }
-        function endHug() {
-            document.getElementById('hug-display').classList.remove('hug-active');
-            confetti({ particleCount: 20, spread: 40 });
-            completeDay(6);
-        }
+    /* --- DAY 3 --- */
+    function unwrapChoco(el) {
+        if(el.classList.contains('unwrapped')) return;
+        el.classList.add('unwrapped');
+        confetti({ shapes: ['square'], colors: ['#ffd700'], particleCount: 30 });
+        document.getElementById('day3-msg').classList.remove('hidden');
+        completeDay(3);
+    }
 
-        /* --- DAY 7 --- */
-        function addLipstick(e) {
-            const mark = document.createElement('div');
-            mark.className = 'lipstick-mark';
-            mark.innerText = '💋';
-            mark.style.left = e.clientX + 'px';
-            mark.style.top = e.clientY + 'px';
-            mark.style.transform = `translate(-50%, -50%) rotate(${Math.random()*40-20}deg)`;
-            document.getElementById('view-day7').appendChild(mark);
-        }
-
-        /* --- DAY 8 --- */
-        function openLetter() {
-            const l = document.getElementById('val-letter');
-            if(l.classList.contains('show')) return;
-            l.classList.add('show');
+    /* --- DAY 5 --- */
+    function lockPromise(el) {
+        if(el.classList.contains('locked')) return;
+        el.classList.add('locked');
+        setTimeout(() => {
+            el.querySelector('.h-left').innerText = "🤞";
+            el.querySelector('.h-right').innerText = "🤞";
+            document.getElementById('bday-unlock').classList.remove('hidden');
             confetti();
-            completeDay(8);
-        }
+        }, 500);
+        completeDay(5);
+    }
 
-        /* Utils */
-        const style = document.createElement('style');
-        style.innerHTML = ` .hidden { display: none !important; } `;
-        document.head.appendChild(style);
+    /* --- DAY 6 --- */
+    function startHug() {
+        document.getElementById('hug-display').classList.add('hug-active');
+        if(navigator.vibrate) navigator.vibrate(200);
+    }
+    function endHug() {
+        document.getElementById('hug-display').classList.remove('hug-active');
+        confetti({ particleCount: 20, spread: 40 });
+        completeDay(6);
+    }
 
-        function startCountdown() {
+    /* --- DAY 7 --- */
+    function addLipstick(e) {
+        const mark = document.createElement('div');
+        mark.className = 'lipstick-mark';
+        mark.innerText = '💋';
+        mark.style.left = e.clientX + 'px';
+        mark.style.top = e.clientY + 'px';
+        mark.style.transform = `translate(-50%, -50%) rotate(${Math.random()*40-20}deg)`;
+        document.getElementById('view-day7').appendChild(mark);
+    }
+
+    /* --- DAY 8 --- */
+    function openLetter() {
+        const l = document.getElementById('val-letter');
+        if(l.classList.contains('show')) return;
+        l.classList.add('show');
+        confetti();
+        completeDay(8);
+    }
+
+    /* --- 2027 COUNTDOWN LOGIC --- */
+    function startCountdown() {
+        const targetDate = new Date(BIRTHDAY_TARGET);
+        const el = document.getElementById('countdown');
+
+        function updateTimer() {
             const now = new Date();
-            const currentYear = now.getFullYear();
-            
-            // Target: Feb 11, 00:00:00
-            let targetDate = new Date(`${currentYear}-02-11T00:00:00`);
-            
-            // Cutoff: Feb 12, 00:00:00 (When countdown should disappear)
-            const cutoffDate = new Date(`${currentYear}-02-12T00:00:00`);
+            const diff = targetDate - now;
 
-            // If we are already past Feb 11 THIS year, but not yet next year (unlikely during dev, but safe logic)
-            // Note: This logic assumes we want the countdown for the UPCOMING Feb 11.
-            
-            const el = document.getElementById('countdown');
-
-            function updateTimer() {
-                const currentTime = new Date();
-                
-                // 1. If it's Feb 12 or later, hide the clock text or replace it
-                if (currentTime >= cutoffDate) {
-                    if(el) el.innerHTML = "Ended";
-                    return; 
+            if (diff <= 0) {
+                if(el) {
+                    el.innerHTML = "BDAY!🎂";
+                    el.style.color = "#27ae60";
                 }
-
-                const diff = targetDate - currentTime;
-
-                // 2. If it's Feb 11 (diff is negative but before cutoff), show Happy Birthday
-                if (diff <= 0) {
-                    if(el) {
-                        el.innerHTML = "BDAY!🎂";
-                        el.style.color = "#27ae60"; // Green
-                    }
-                    return;
-                }
-                
-                // 3. Calculate Days, Hours, Minutes, Seconds
-                const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-                const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
-                const m = Math.floor((diff / 1000 / 60) % 60);
-                const s = Math.floor((diff / 1000) % 60);
-
-                // 4. Format with leading zeros (e.g., 05 instead of 5)
-                const dd = d < 10 ? "0"+d : d;
-                const hh = h < 10 ? "0"+h : h;
-                const mm = m < 10 ? "0"+m : m;
-                const ss = s < 10 ? "0"+s : s;
-
-                // Digital Clock Format: 02d 14:05:30
-                if(el) el.innerHTML = `${dd}d ${hh}:${mm}:${ss}`;
+                return;
             }
+            
+            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const m = Math.floor((diff / 1000 / 60) % 60);
+            const s = Math.floor((diff / 1000) % 60);
 
-            // Run immediately and then every second
-            updateTimer(); 
-            setInterval(updateTimer, 1000); 
+            const dd = d < 10 ? "0"+d : d;
+            const hh = h < 10 ? "0"+h : h;
+            const mm = m < 10 ? "0"+m : m;
+            const ss = s < 10 ? "0"+s : s;
+
+            if(el) el.innerHTML = `${dd}d ${hh}:${mm}:${ss}`;
         }
+
+        updateTimer(); 
+        setInterval(updateTimer, 1000); 
+    }
+
+    // CSS Helper
+    const style = document.createElement('style');
+    style.innerHTML = ` .hidden { display: none !important; } `;
+    document.head.appendChild(style);
     </script>
 </body>
 </html>
